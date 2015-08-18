@@ -3,8 +3,14 @@ function setup-clients {
 
   rerun_log "Installing clients (version: ${version})"
 
+  PATH="${ORIGINAL_PATH}"
+  save-var PATH
+  
   setup-deis-client "${version}"
   setup-deisctl-client "${version}"
+
+  export PATH="${DEIS_BIN_DIR}:${PATH}"
+  save-var PATH
 }
 
 function is-released-version {
@@ -46,6 +52,10 @@ function build-deis-client {
 function setup-deis-client {
   local version="${1}"
 
+  # give this session a unique ~/.deis/<client>.json file
+  export DEIS_PROFILE="test-${DEIS_TEST_ID}"
+  rm -f $HOME/.deis/test-${DEIS_TEST_ID}.json
+
   rerun_log "Installing deis-cli (${version}) at ${DEISCLI_BIN}..."
 
   if is-released-version "${version}" ; then
@@ -54,6 +64,7 @@ function setup-deis-client {
     build-deis-client "${version}" "${PROJECT_DIR}"
   fi
 
+  save-var DEIS_PROFILE
 }
 
 function build-deisctl {
@@ -69,27 +80,26 @@ function build-deisctl {
     make -C deisctl build
 
     rerun_log "Installing deisctl at ${DEISCTL_BIN}"
-    mkdir -p "${DEISCTL_UNITS_DIR}"
+    mkdir -p "${DEISCTL_UNITS}"
     cp "deisctl/deisctl" "${DEISCTL_BIN}"
-    cp -r deisctl/units/* "${DEISCTL_UNITS_DIR}"
-
+    cp -r deisctl/units/* "${DEISCTL_UNITS}"
   }
 }
 
 function setup-deisctl-client {
   local version="${1}"
 
-  unset DEISCTL_UNITS
-
   if is-released-version "${version}" ; then
     download-client "deisctl" "${version}" "${DEIS_BIN_DIR}"
 
-    rerun_log "Moving unit files to ${DEISCTL_UNITS_DIR}"
-    mkdir -p "${DEISCTL_UNITS_DIR}"
-    mv ${HOME}/.deis/units/* ${DEISCTL_UNITS_DIR}
+    rerun_log "Moving unit files to ${DEISCTL_UNITS}"
+    mkdir -p "${DEISCTL_UNITS}"
+    mv ${HOME}/.deis/units/* ${DEISCTL_UNITS}
   else
     build-deisctl "${version}" "${PROJECT_DIR}"
   fi
+
+  save-var DEISCTL_UNITS
 }
 
 function update-repo {

@@ -25,7 +25,7 @@ rerun_options_parse() {
             --provider) rerun_option_check $# $1; PROVIDER=$2 ; shift ;;
             --from) rerun_option_check $# $1; FROM=$2 ; shift ;;
             --to) rerun_option_check $# $1; TO=$2 ; shift ;;
-            --skip-cleanup) rerun_option_check $# $1; SKIP_CLEANUP=$2 ; shift ;;
+            --skip-cleanup) SKIP_CLEANUP=true; [[ ${2:-} == true ]] && shift ;;
             --upgrade-style) rerun_option_check $# $1; UPGRADE_STYLE=$2 ; shift ;;
             # help option
             -|--*?)
@@ -42,7 +42,6 @@ rerun_options_parse() {
     # Set defaultable options.
     [ -z "$PROVIDER" ] && PROVIDER="$(rerun_property_get $RERUN_MODULE_DIR/options/provider DEFAULT)"
     [ -z "$TO" ] && TO="$(rerun_property_get $RERUN_MODULE_DIR/options/to DEFAULT)"
-    [ -z "$SKIP_CLEANUP" ] && SKIP_CLEANUP="$(rerun_property_get $RERUN_MODULE_DIR/options/skip-cleanup DEFAULT)"
     [ -z "$UPGRADE_STYLE" ] && UPGRADE_STYLE="$(rerun_property_get $RERUN_MODULE_DIR/options/upgrade-style DEFAULT)"
     # Check required options are set
     [ -z "$PROVIDER" ] && { echo >&2 "missing required option: --provider" ; return 2 ; }
@@ -59,7 +58,6 @@ rerun_options_parse() {
 : ${PROVIDER:=}
 : ${FROM:=}
 : ${TO:=}
-: ${SKIP_CLEANUP:=}
 : ${UPGRADE_STYLE:=}
 
 

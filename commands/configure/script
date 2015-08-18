@@ -9,8 +9,8 @@
 # The `command` and `usage` comments describe the command
 # and show its options.
 # 
-#/ command: deis:config: ""
-#/ usage: rerun deis:config [ --token <>] 
+#/ command: deis:configure: ""
+#/ usage: rerun deis:configure [ --file <>] [ --show] 
 
 # Load common functions
 # ---------------------
@@ -49,13 +49,15 @@ set -o nounset -o pipefail
 # declared by `rerun` or by the option parser function.
 
 #/ rerun-variables: RERUN, RERUN_VERSION, RERUN_MODULES, RERUN_MODULE_DIR
-#/ option-variables: TOKEN
+#/ option-variables: FILE SHOW
 
 # The `rerun_options_parse` function processes the command line
 # arguments. Each accepted command line flag results in setting 
 # one the corresponding option variables.
 
 rerun_options_parse "$@"
+
+source-defaults
 
 # Command implementation
 # ----------------------
@@ -64,27 +66,28 @@ rerun_options_parse "$@"
 # Put the command implementation here.
 # - - -
 
-if [ -n "${TOKEN:-}" ]; then
-  DEIS_TEST_ID="${TOKEN}"
-  rerun_log warn "You are using a preconfigured Deis config file from ${TEST_ROOT}/vars:"
-  update-link ${TOKEN}
+if [ -n "${FILE:-}" ]; then
+  rerun_log warn "You are using a preconfigured Deis config file from ${FILE}:"
+  update-link ${FILE}
+  cat "${DEIS_TEST_ENV}"
   load-env
-  cat /tmp/deis/vars
-  exit 0
+else
+  configure-go
+  configure-ipaddr
+  configure-registry
+  choose-deis-type
+
+  source-config
+
+  save-env
 fi
 
-source-config
-
-choose-deis-type
-
-save-env
-
-rerun_log "Deis has now been configured on this system using ${TEST_ROOT}/vars"
+rerun_log "Rerun Deis has been configured on this system using ${DEIS_VARS_FILE}"
 
 cat <<EOF
 To use the configuration outside of Rerun, you can run:
 
-  source ${TEST_ENV}
+  source "${DEIS_VARS_FILE}"
 
 EOF
 

@@ -53,20 +53,18 @@ set -o nounset -o pipefail
 # arguments. Each accepted command line flag results in setting 
 # one the corresponding option variables.
 
+source-defaults
+
+load-env
+
 rerun_options_parse "$@"
+
+source-config
 
 trap destroy-cluster EXIT
 
 # Command implementation
 # ----------------------
-
-TEST_ROOT="${TEST_ROOT}/${VERSION}"
-
-setup-clients "${VERSION}"
-
-exit 1
-
-#eval $(rerun clients:config --version "${VER}")
 
 setup-provider "${PROVIDER}"
 
@@ -76,11 +74,12 @@ destroy-cluster
 
 setup-clients "${VERSION}"
 
-make discovery-url
+{
+  cd ${DEIS_ROOT}
+  make discovery-url
+}
 
 create-cluster
-
-build-deis "${VERSION}"
 
 deploy-deis "${VERSION}"
 

@@ -1,39 +1,3 @@
-
-rm -f $HOME/.deis/test-$DEIS_TEST_ID.json
-
-# bail if registry is not accessible
-if ! curl -s $DEV_REGISTRY 1> /dev/null && ! curl -s https://$DEV_REGISTRY 1> /dev/null; then
-  echo "DEV_REGISTRY is not accessible, exiting..."
-  exit 1
-fi
-
-# disable git+ssh host key checking
-export GIT_SSH=$DEIS_ROOT/tests/bin/git-ssh-nokeycheck.sh
-
-# install required go dependencies
-go get -v github.com/golang/lint/golint
-go get -v github.com/tools/godep
-
-# cleanup any stale example applications
-rm -rf $DEIS_ROOT/tests/example-*
-
-# generate ssh keys if they don't already exist
-if [ ! -f ${HOME}/.ssh/$DEIS_TEST_AUTH_KEY ]; then
-  ssh-keygen -t rsa -f ~/.ssh/$DEIS_TEST_AUTH_KEY -N ''
-fi
-
-if [ ! -f ${HOME}/.ssh/deiskey ]; then
-  ssh-keygen -q -t rsa -f ~/.ssh/deiskey -N '' -C deiskey
-fi
-
-# prepare the SSH agent
-ssh-add -D 2> /dev/null || eval $(ssh-agent) && ssh-add -D 2> /dev/null
-ssh-add ${HOME}/.ssh/$DEIS_TEST_AUTH_KEY 2> /dev/null
-ssh-add $DEIS_TEST_SSH_KEY 2> /dev/null
-
-# clear the drink of choice in case the user has set it
-unset DEIS_DRINK_OF_CHOICE
-
 # wipe out all vagrants & deis virtualboxen
 function cleanup {
     if [ "$SKIP_CLEANUP" != true ]; then

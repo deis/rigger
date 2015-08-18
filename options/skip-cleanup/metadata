@@ -3,10 +3,10 @@
 # Thu Jul 23 11:38:40 MDT 2015
 NAME=skip-cleanup
 DESCRIPTION="Skip cleanup step of test (useful for after provision)"
-ARGUMENTS=true
+ARGUMENTS=false
 REQUIRED=false
 SHORT=
 LONG=skip-cleanup
-DEFAULT=false
+DEFAULT=
 EXPORT=false
 

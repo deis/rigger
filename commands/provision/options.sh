@@ -24,7 +24,7 @@ rerun_options_parse() {
         case "$OPT" in
             --provider) rerun_option_check $# $1; PROVIDER=$2 ; shift ;;
             --version) rerun_option_check $# $1; VERSION=$2 ; shift ;;
-            --skip-cleanup) rerun_option_check $# $1; SKIP_CLEANUP=$2 ; shift ;;
+            --skip-cleanup) SKIP_CLEANUP=true; [[ ${2:-} == true ]] && shift ;;
             # help option
             -|--*?)
                 rerun_option_usage
@@ -40,7 +40,6 @@ rerun_options_parse() {
     # Set defaultable options.
     [ -z "$PROVIDER" ] && PROVIDER="$(rerun_property_get $RERUN_MODULE_DIR/options/provider DEFAULT)"
     [ -z "$VERSION" ] && VERSION="$(rerun_property_get $RERUN_MODULE_DIR/options/version DEFAULT)"
-    [ -z "$SKIP_CLEANUP" ] && SKIP_CLEANUP="$(rerun_property_get $RERUN_MODULE_DIR/options/skip-cleanup DEFAULT)"
     # Check required options are set
     [ -z "$PROVIDER" ] && { echo >&2 "missing required option: --provider" ; return 2 ; }
     [ -z "$VERSION" ] && { echo >&2 "missing required option: --version" ; return 2 ; }

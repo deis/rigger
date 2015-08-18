@@ -4,7 +4,11 @@ function build-deis {
   if is-released-version "${version}"; then
     deisctl config platform set version="v${version}"
   else
-    make build dev-release
+    check-registry
+    {
+      cd "${DEIS_ROOT}"
+      make build dev-release
+    }
   fi
 }
 

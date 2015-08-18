@@ -55,6 +55,8 @@ set -o nounset -o pipefail
 
 rerun_options_parse "$@"
 
+source-defaults
+
 load-env
 
 source-config
