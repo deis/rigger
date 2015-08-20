@@ -69,13 +69,14 @@ function setup-provider-dependencies {
 }
 
 function destroy-cluster {
-  if [[ ${SKIP_CLEANUP} != true ]]; then
+  if [[ ${SKIP_CLEANUP:-} != true ]]; then
     rerun_log "Cleaning up"
     _destroy || true
   fi
 }
 
 function create-cluster {
+  save-var PROVIDER
   _create
 }
 
