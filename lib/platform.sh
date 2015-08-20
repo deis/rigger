@@ -6,6 +6,7 @@ function build-deis {
   else
     check-registry
     {
+      setup-go-dependencies
       cd "${DEIS_ROOT}"
       make build dev-release
     }

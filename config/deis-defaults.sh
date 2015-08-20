@@ -1,11 +1,11 @@
 # use GOPATH to determine project root
-DEIS_ROOT=${GOPATH?}/src/github.com/deis/deis
+#DEIS_ROOT=${GOPATH?}/src/github.com/deis/deis
 
 # the application under test
-DEIS_TEST_APP=${DEIS_TEST_APP:-example-dockerfile-go}
+#DEIS_TEST_APP=${DEIS_TEST_APP:-example-dockerfile-go}
 
 # SSH key name used for testing
-DEIS_TEST_AUTH_KEY=${DEIS_TEST_AUTH_KEY:-deis-test}
+#DEIS_TEST_AUTH_KEY=${DEIS_TEST_AUTH_KEY:-deis-test}
 
 # SSH key used for deisctl tunneling
 # DEIS_TEST_SSH_KEY=${DEIS_TEST_SSH_KEY:-~/.vagrant.d/insecure_private_key}
@@ -28,9 +28,7 @@ DEIS_TEST_AUTH_KEY=${DEIS_TEST_AUTH_KEY:-deis-test}
 
 # random 10-char (5-byte) hex string to identify a test run
 DEIS_TEST_ID=${DEIS_TEST_ID:-$(openssl rand -hex 5)}
-
 DEIS_TEST_ROOT="/tmp/deis/${DEIS_TEST_ID}"
-
 DEIS_VARS_FILE="${DEIS_TEST_ROOT}/vars"
 
 DEIS_BIN_DIR="${DEIS_TEST_ROOT}/bin"
@@ -39,4 +37,4 @@ DEISCTL_BIN="${DEIS_BIN_DIR}/deisctl"
 
 DEISCTL_UNITS="${DEIS_TEST_ROOT}/units"
 
-# PATH="${DEIS_BIN_DIR}:${PATH}"
+GIT_SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"

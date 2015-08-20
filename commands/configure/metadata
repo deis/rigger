@@ -3,4 +3,4 @@
 # Mon Aug 17 13:54:00 MDT 2015
 NAME=configure
 DESCRIPTION=""
-OPTIONS="file show"
+OPTIONS="file show type"

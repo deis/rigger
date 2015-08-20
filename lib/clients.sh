@@ -2,19 +2,12 @@ function setup-clients {
   local version="${1}"
 
   rerun_log "Installing clients (version: ${version})"
-
-  PATH="${ORIGINAL_PATH}"
-  save-var PATH
   
   setup-deis-client "${version}"
   setup-deisctl-client "${version}"
 
   export PATH="${DEIS_BIN_DIR}:${PATH}"
   save-var PATH
-}
-
-function is-released-version {
-  [[ ${1} =~ ^([0-9]+\.){0,2}[0-9]$ ]] && return 0
 }
 
 function download-client {
@@ -29,6 +22,11 @@ function download-client {
   }
 }
 
+function setup-go-dependencies {
+  go get -v github.com/golang/lint/golint
+  go get -v github.com/tools/godep
+}
+
 function build-deis-client {
   local version="${1}"
   local dir="${2}"
@@ -39,6 +37,8 @@ function build-deis-client {
     cd "${dir}"
 
     update-repo "${dir}" "${version}"
+
+    setup-go-dependencies
     make -C client build
 
     rerun_log "Installing deis-cli at ${DEISCLI_BIN}"
@@ -61,7 +61,7 @@ function setup-deis-client {
   if is-released-version "${version}" ; then
     download-client "deis-cli" "${version}" "${DEIS_BIN_DIR}"
   else
-    build-deis-client "${version}" "${PROJECT_DIR}"
+    build-deis-client "${version}" "${DEIS_ROOT}"
   fi
 
   save-var DEIS_PROFILE
@@ -76,6 +76,7 @@ function build-deisctl {
   {
     cd "${dir}"
 
+    setup-go-dependencies
     update-repo "${dir}" "${version}"
     make -C deisctl build
 
@@ -96,7 +97,7 @@ function setup-deisctl-client {
     mkdir -p "${DEISCTL_UNITS}"
     mv ${HOME}/.deis/units/* ${DEISCTL_UNITS}
   else
-    build-deisctl "${version}" "${PROJECT_DIR}"
+    build-deisctl "${version}" "${DEIS_ROOT}"
   fi
 
   save-var DEISCTL_UNITS

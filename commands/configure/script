@@ -10,7 +10,20 @@
 # and show its options.
 # 
 #/ command: deis:configure: ""
-#/ usage: rerun deis:configure [ --file <>] [ --show] 
+#/ usage: rerun deis:configure [ --file <>] [ --show] [ --type <new>] 
+#/
+#/ Use:
+#/    --type existing --file
+#/
+#/      to use an existing Deis config file
+#/
+#/    --type existing
+#/
+#/      interactively configure a connection to an existing Deis cluster
+#/
+#/    --type new
+#/
+#/      interactively configure a new Deis cluster
 
 # Load common functions
 # ---------------------
@@ -49,7 +62,7 @@ set -o nounset -o pipefail
 # declared by `rerun` or by the option parser function.
 
 #/ rerun-variables: RERUN, RERUN_VERSION, RERUN_MODULES, RERUN_MODULE_DIR
-#/ option-variables: FILE SHOW
+#/ option-variables: FILE SHOW TYPE
 
 # The `rerun_options_parse` function processes the command line
 # arguments. Each accepted command line flag results in setting 
@@ -62,26 +75,49 @@ source-defaults
 # Command implementation
 # ----------------------
 
-# - - -
-# Put the command implementation here.
-# - - -
+case ${TYPE} in
+  existing)
 
-if [ -n "${FILE:-}" ]; then
-  rerun_log warn "You are using a preconfigured Deis config file from ${FILE}:"
-  update-link ${FILE}
-  cat "${DEIS_TEST_ENV}"
-  load-env
-else
-  configure-go
-  configure-ipaddr
-  configure-registry
-  choose-deis-type
+    # Use an existing 
+    if [ -n "${FILE:-}" ]; then
+      rerun_log warn "You are using a preconfigured Deis config file from ${FILE}:"
+      update-link ${FILE}
+      cat "${DEIS_TEST_ENV}"
+      load-env
+    else
+      configure-deis-version
+      configure-go
+      configure-deis-root
+      configure-deisctl-tunnel
 
-  source-config
+      source-config
 
-  save-env
-fi
+      vars="DEIS_ROOT
+            GOPATH
+            DEISCTL_TUNNEL
+            VERSION"
 
+      save-env "${vars}"
+    fi
+    ;;
+  new)
+    configure-deis-version
+    configure-go
+    configure-deis-root
+    configure-registry
+
+    source-config
+
+    vars="DEIS_ROOT
+          GOPATH
+          DEV_REGISTRY
+          VERSION"
+
+    save-env "${vars}"
+    ;;
+esac
+
+echo
 rerun_log "Rerun Deis has been configured on this system using ${DEIS_VARS_FILE}"
 
 cat <<EOF

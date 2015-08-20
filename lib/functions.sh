@@ -69,7 +69,7 @@ function setup-provider-dependencies {
 }
 
 function destroy-cluster {
-  if [ ${SKIP_CLEANUP} != true ]; then
+  if [[ ${SKIP_CLEANUP} != true ]]; then
     rerun_log "Cleaning up"
     _destroy || true
   fi
@@ -94,34 +94,30 @@ function update-link {
   local file="${1}"
 
   if [ -f "${file}" ]; then
+    rerun_log debug "Linking ${DEIS_TEST_ENV} to ${file}"
     ln -fs "${file}" "${DEIS_TEST_ENV}"
   else
     rerun_die "${file} does not exist."
   fi
 }
 
+function is-released-version {
+  [[ ${1} =~ ^([0-9]+\.){0,2}[0-9]$ ]] && return 0
+}
+
 function save-env {
+  local vars_to_save="${1:-}"
+  vars_to_save+=" DEIS_VARS_FILE
+                  DEIS_TEST_ID
+                  ORIGINAL_PATH
+                  PATH
+                  DEIS_TEST_ROOT
+                  VERSION"
+
   mkdir -p "${DEIS_TEST_ROOT}"
   cat /dev/null > "${DEIS_VARS_FILE}"
 
-  local vars="DEV_REGISTRY
-              DEISCTL_TUNNEL
-              DEISCTL_UNITS
-              DEIS_ROOT
-              DEIS_TEST_APP
-              DEIS_TEST_AUTH_KEY
-              DEIS_TEST_DOMAIN
-              DEIS_TEST_ID
-              DEIS_TEST_SSH_KEY
-              DEIS_VARS_FILE
-              GOPATH
-              HOST_IPADDR
-              ORIGINAL_PATH
-              PATH
-              DEIS_TEST_ROOT
-              VERSION"
-
-  for var in ${vars}; do
+  for var in ${vars_to_save}; do
     if [ -z "${!var:-}" ]; then
       rerun_log debug "${var} is null, therefore not writing to ${DEIS_VARS_FILE}"
     else
@@ -136,9 +132,11 @@ function save-env {
 function save-var {
   local var="${1}"
 
-  sed -e "/^export ${var}=.*$/d" -i bak ${DEIS_VARS_FILE}
-  echo-export "${var}" >> "${DEIS_VARS_FILE}"
-  sort -u "${DEIS_VARS_FILE}" -o "${DEIS_VARS_FILE}"
+  if [ -n "${var:-}" ]; then
+    sed -e "/^export ${var}=.*$/d" -i bak ${DEIS_VARS_FILE}
+    echo-export "${var}" >> "${DEIS_VARS_FILE}"
+    sort -u "${DEIS_VARS_FILE}" -o "${DEIS_VARS_FILE}"
+  fi
 }
 
 function setup-test-hacks {

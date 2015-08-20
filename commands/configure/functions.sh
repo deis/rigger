@@ -1,48 +1,56 @@
-function choose-deis-type {
-  local options=(
-                  "Released version"
-                  "Official GitHub Repository"
-                )
+function choose-deis-version {
 
-  choice-prompt "What Deis would you like to use?" options[@] 1 answer
+  :
 
-  case ${answer} in
-    1)
-      prompt "Enter Deis version:" 1.9.0 VERSION
-      ;;
-    2)
-      prompt "Enter Deis branch/tag/sha1:" master VERSION
-      ;;
-  esac
+  # local options=(
+  #                 "Released version"
+  #                 "Official GitHub Repository"
+  #               )
+
+  # choice-prompt "What Deis would you like to use?" options[@] 1 answer
+
+  # case ${answer} in
+  #   1)
+  #     prompt "Enter Deis version:" 1.9.0 VERSION
+  #     ;;
+  #   2)
+  #     prompt "Enter Deis branch/tag/sha1:" master VERSION
+  #     ;;
+  # esac
+}
+
+function need-deis-repo {
+  ! is-released-version "${VERSION}"
+}
+
+function configure-deisctl-tunnel {
+  prompt "Enter Deisctl tunnel IP address:" 127.0.0.1:2222 DEISCTL_TUNNEL
+}
+
+function configure-deis-version {
+  prompt "Enter Deis version:" master VERSION
 }
 
 function configure-go {
-  if [ -z "${GOPATH:-}" ]; then
-    prompt "What's your GOPATH?" "${HOME}/go" GOPATH
-  fi
+  ORIGINAL_PATH="${PATH}"
+  export ORIGINAL_PATH
+
+  prompt "What's your GOPATH?" "${HOME}/go" GOPATH
 
   export PATH="${GOPATH}/bin:${PATH}"
-  export ORIGINAL_PATH="${PATH}"
-  echo-export GOPATH
-  echo-export PATH
-  echo-export ORIGINAL_PATH
-
 }
 
-function guess-ipaddr {
-  /sbin/ifconfig vboxnet2 | grep 'inet ' | awk '{print $2}'
+function configure-deis-root {
+  # Needed to run provisioning (provisioning scripts located in repo)
+  prompt "Where is the Deis repository located?" "${GOPATH:-${HOME}}/src/github.com/deis/deis" DEIS_ROOT
 }
 
 function configure-ipaddr {
-  if [ -z "${HOST_IPADDR:-}" ]; then
-    prompt "What's the ip address of your Docker environment?" "$(guess-ipaddr)" HOST_IPADDR
-  fi
-  echo-export HOST_IPADDR
+  prompt "What's the ip address of your Docker environment?" "$(guess-ipaddr)" HOST_IPADDR
 }
 
 function configure-registry {
-  if [ -z "${DEV_REGISTRY:-}" ]; then
-    prompt "Where can I find your Docker registry?" "192.168.59.103:5000" DEV_REGISTRY
+  if need-deis-repo; then
+    prompt "Where can I find your Docker registry?" "$(guess-registry)" DEV_REGISTRY
   fi
-  echo-export DEV_REGISTRY
 }
