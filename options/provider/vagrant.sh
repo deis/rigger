@@ -1,3 +1,6 @@
+DEIS_TEST_DOMAIN="local3.deisapp.com"
+DEIS_TEST_SSH_KEY=${HOME}/.vagrant.d/insecure_private_key
+
 function _setup-provider-dependencies {
   :
 }
@@ -12,17 +15,13 @@ function _destroy-all-vagrants {
 function _create {
   rerun_log "Creating Vagrant cluster..."
 
-  export DEIS_TEST_SSH_KEY="${DEIS_TEST_SSH_KEY:-${HOME}/.vagrant.d/insecure_private_key}"
-  export DEIS_TEST_DOMAIN="${DEIS_TEST_DOMAIN:-local3.deisapp.com}"
-  export DEISCTL_TUNNEL="${DEISCTL_TUNNEL:-127.0.0.1:2222}"
-  save-var DEIS_TEST_SSH_KEY
-  save-var DEIS_TEST_DOMAIN
-  save-var DEISCTL_TUNNEL
-
   {
     cd ${DEIS_ROOT}
     vagrant up --provider virtualbox
   }
+
+  export DEISCTL_TUNNEL="${DEISCTL_TUNNEL:-127.0.0.1:2222}"
+  save-var DEISCTL_TUNNEL
 }
 
 function _destroy {

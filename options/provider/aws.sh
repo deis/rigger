@@ -1,8 +1,8 @@
 # add random characters after STACK_TAG to avoid collisions
+
 STACK_TAG="${STACK_TAG:-test}-${DEIS_TEST_ID}"
 
 export DEIS_NUM_INSTANCES=${DEIS_NUM_INSTANCES:-3}
-export DEIS_TEST_DOMAIN="${STACK_TAG}.${DEIS_TEST_DOMAIN}"
 export STACK_NAME="${STACK_NAME:-deis-${STACK_TAG}}"
 
 function _setup-provider-dependencies {
@@ -136,6 +136,7 @@ function _create {
 
   export ELB_DNS_NAME=$(aws-get-elb-dns-name "${STACK_NAME}")
   export ELB_NAME=$(aws-get-elb-name "${ELB_DNS_NAME}")
+  export DEIS_TEST_DOMAIN="${STACK_TAG}.${DEIS_TEST_DOMAIN}"
 
   aws-setup-route53 "${STACK_NAME}" "${DEIS_TEST_DOMAIN}"
 
@@ -144,6 +145,12 @@ function _create {
   export DEISCTL_TUNNEL="$(aws-deisctl-tunnel ${STACK_NAME})"
 
   rerun_log "DEISCTL_TUNNEL=${DEISCTL_TUNNEL}"
+  save-var DEISCTL_TUNNEL
+  save-var ELB_DNS_NAME
+  save-var ELB_NAME
+  save-var STACK_TAG
+  save-var STACK_NAME
+  save-var DEIS_TEST_DOMAIN
 }
 
 function _destroy {

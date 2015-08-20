@@ -24,17 +24,30 @@ function choice-prompt {
 
 function prompt {
   local question="${1}"
-  local default="${2}"
-  local return_var="${3}"
+  local return_var="${2}"
+  local default="${3:-}"
 
   if [ -z "${!return_var:-}" ]; then
 
-    rerun_log "-> ${question} [ ${default} ]"
+    local input
 
-    read input
+    while [ -z "${input:-}" ]; do
+
+      if [ -z ${default} ]; then
+        rerun_log "-> ${question} (no default)"
+      else
+        rerun_log "-> ${question} [ ${default} ]"
+      fi
+
+      read input
+
+      [ -n "${default}" ] && break
+
+    done
 
     eval ${return_var}=${input:-${default}}
 
     echo "You chose: ${!return_var}"
+
   fi
 }

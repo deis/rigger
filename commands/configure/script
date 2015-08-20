@@ -75,47 +75,53 @@ source-defaults
 # Command implementation
 # ----------------------
 
-case ${TYPE} in
-  existing)
+if [ -n "${FILE:-}" ]; then
+  rerun_log warn "You are using a preconfigured Deis config file from ${FILE}:"
+  update-link ${FILE}
+  cat "${DEIS_TEST_ENV}"
+  load-env
+else
 
-    # Use an existing 
-    if [ -n "${FILE:-}" ]; then
-      rerun_log warn "You are using a preconfigured Deis config file from ${FILE}:"
-      update-link ${FILE}
-      cat "${DEIS_TEST_ENV}"
-      load-env
-    else
-      configure-deis-version
-      configure-go
-      configure-deis-root
-      configure-deisctl-tunnel
+  possible_vars=""
 
-      source-config
+  rerun_log warn "General questions..."
 
-      vars="DEIS_ROOT
-            GOPATH
-            DEISCTL_TUNNEL
-            VERSION"
+  configure-deis-version
+  possible_vars+=" VERSION"
 
-      save-env "${vars}"
-    fi
-    ;;
-  new)
-    configure-deis-version
-    configure-go
-    configure-deis-root
-    configure-registry
+  configure-go
+  possible_vars+=" GOPATH"
 
-    source-config
+  configure-deis-root
+  possible_vars+=" DEIS_ROOT"
 
-    vars="DEIS_ROOT
-          GOPATH
-          DEV_REGISTRY
-          VERSION"
+  configure-registry
+  possible_vars+=" DEV_REGISTRY"
 
-    save-env "${vars}"
-    ;;
-esac
+  rerun_log warn "Configuring operational tools..."
+
+  configure-provider
+  possible_vars+=" PROVIDER"
+
+  source-config
+
+  setup-provider "${PROVIDER}"
+
+  # Consider making this a list + selection (+ ability to create a new key)
+  configure-ssh
+  possible_vars+=" DEIS_TEST_SSH_KEY"
+
+  configure-dns
+  possible_vars+=" DEIS_TEST_DOMAIN"
+
+  rerun_log warn "Configuring developer tools..."
+
+  # Consider making this a list + selection (+ ability to create a new key)
+  configure-app-deployment
+  possible_vars+=" DEIS_TEST_AUTH_KEY"
+
+  # save-env "${possible_vars}"
+fi
 
 echo
 rerun_log "Rerun Deis has been configured on this system using ${DEIS_VARS_FILE}"
