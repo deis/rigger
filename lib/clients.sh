@@ -43,8 +43,8 @@ function build-deis-client {
 
     rerun_log "Installing deis-cli at ${DEISCLI_BIN}"
 
-    mkdir -p "${DEIS_BIN_DIR}"
-    cp "client/dist/deis" ${DEISCLI_BIN}
+    mkdir -p "${DEIS_TEST_ROOT}/${version}"
+    cp "client/dist/deis" "${DEIS_TEST_ROOT}/${version}/deis"
 
   }
 }
@@ -59,10 +59,14 @@ function setup-deis-client {
   rerun_log "Installing deis-cli (${version}) at ${DEISCLI_BIN}..."
 
   if is-released-version "${version}" ; then
-    download-client "deis-cli" "${version}" "${DEIS_BIN_DIR}"
+    download-client "deis-cli" "${version}" "${DEIS_TEST_ROOT}/${version}"
   else
     build-deis-client "${version}" "${DEIS_ROOT}"
   fi
+
+  rerun_log "Linking ${DEISCLI_BIN} -> ${DEIS_TEST_ROOT}/${version}/deis"
+  mkdir -p "${DEIS_BIN_DIR}"
+  ln -sf "${DEIS_TEST_ROOT}/${version}/deis" "${DEISCLI_BIN}"
 
   save-var DEIS_PROFILE
 }
@@ -81,9 +85,9 @@ function build-deisctl {
     make -C deisctl build
 
     rerun_log "Installing deisctl at ${DEISCTL_BIN}"
-    mkdir -p "${DEISCTL_UNITS}"
-    cp "deisctl/deisctl" "${DEISCTL_BIN}"
-    cp -r deisctl/units/* "${DEISCTL_UNITS}"
+    mkdir -p "${DEIS_TEST_ROOT}/${version}/units"
+    cp "deisctl/deisctl" "${DEIS_TEST_ROOT}/${version}/deisctl"
+    cp -r deisctl/units/* "${DEIS_TEST_ROOT}/${version}/units"
   }
 }
 
@@ -91,16 +95,21 @@ function setup-deisctl-client {
   local version="${1}"
 
   if is-released-version "${version}" ; then
-    download-client "deisctl" "${version}" "${DEIS_BIN_DIR}"
+    download-client "deisctl" "${version}" "${DEIS_TEST_ROOT}/${version}"
 
     rerun_log "Moving unit files to ${DEISCTL_UNITS}"
-    mkdir -p "${DEISCTL_UNITS}"
-    mv ${HOME}/.deis/units/* ${DEISCTL_UNITS}
+    mkdir -p "${DEIS_TEST_ROOT}/${version}/units"
+    mv ${HOME}/.deis/units/* "${DEIS_TEST_ROOT}/${version}/units/"
   else
     build-deisctl "${version}" "${DEIS_ROOT}"
   fi
 
-  save-var DEISCTL_UNITS
+  rerun_log "Linking ${DEISCTL_BIN} -> ${DEIS_TEST_ROOT}/${version}/deis"
+  mkdir -p "${DEIS_BIN_DIR}"
+  ln -sf "${DEIS_TEST_ROOT}/${version}/deisctl" "${DEISCTL_BIN}"
+
+  rerun_log "Linking ${DEISCTL_UNITS} -> ${DEIS_TEST_ROOT}/${version}/units"
+  ln -sf "${DEIS_TEST_ROOT}/${version}/units" "${DEISCTL_UNITS}" 
 }
 
 function update-repo {

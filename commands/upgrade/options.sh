@@ -22,10 +22,8 @@ rerun_options_parse() {
     while [ "$#" -gt 0 ]; do
         OPT="$1"
         case "$OPT" in
-            --provider) rerun_option_check $# $1; PROVIDER=$2 ; shift ;;
-            --from) rerun_option_check $# $1; FROM=$2 ; shift ;;
             --to) rerun_option_check $# $1; TO=$2 ; shift ;;
-            --skip-cleanup) SKIP_CLEANUP=true; [[ ${2:-} == true ]] && shift ;;
+            --cleanup) CLEANUP=true; [[ ${2:-} == true ]] && shift ;;
             --upgrade-style) rerun_option_check $# $1; UPGRADE_STYLE=$2 ; shift ;;
             # help option
             -|--*?)
@@ -40,12 +38,9 @@ rerun_options_parse() {
     done
 
     # Set defaultable options.
-    [ -z "$PROVIDER" ] && PROVIDER="$(rerun_property_get $RERUN_MODULE_DIR/options/provider DEFAULT)"
     [ -z "$TO" ] && TO="$(rerun_property_get $RERUN_MODULE_DIR/options/to DEFAULT)"
     [ -z "$UPGRADE_STYLE" ] && UPGRADE_STYLE="$(rerun_property_get $RERUN_MODULE_DIR/options/upgrade-style DEFAULT)"
     # Check required options are set
-    [ -z "$PROVIDER" ] && { echo >&2 "missing required option: --provider" ; return 2 ; }
-    [ -z "$FROM" ] && { echo >&2 "missing required option: --from" ; return 2 ; }
     [ -z "$UPGRADE_STYLE" ] && { echo >&2 "missing required option: --upgrade-style" ; return 2 ; }
     # If option variables are declared exportable, export them.
 
@@ -55,8 +50,6 @@ rerun_options_parse() {
 
 
 # If not already set, initialize the options variables to null.
-: ${PROVIDER:=}
-: ${FROM:=}
 : ${TO:=}
 : ${UPGRADE_STYLE:=}
 

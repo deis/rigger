@@ -67,16 +67,3 @@ setup-test-hacks
   cd ${DEIS_ROOT}
   make test-smoke
 }
-
-# Command implementation
-# ----------------------
-
-# - - -
-# Put the command implementation here.
-# - - -
-
-
-
-# Done. Exit with last command exit status.
-exit $?
-

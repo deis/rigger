@@ -34,7 +34,6 @@ DEIS_VARS_FILE="${DEIS_TEST_ROOT}/vars"
 DEIS_BIN_DIR="${DEIS_TEST_ROOT}/bin"
 DEISCLI_BIN="${DEIS_BIN_DIR}/deis"
 DEISCTL_BIN="${DEIS_BIN_DIR}/deisctl"
-
 DEISCTL_UNITS="${DEIS_TEST_ROOT}/units"
 
-GIT_SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+GIT_SSH="${DEIS_ROOT}/tests/bin/git-ssh-nokeycheck.sh"

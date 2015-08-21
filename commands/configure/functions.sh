@@ -60,11 +60,11 @@ function configure-app-deployment {
 }
 
 function configure-ssh {
-  prompt "What ssh key should I use (for deisctl/ssh)?" DEIS_TEST_SSH_KEY
+  prompt "What ssh key should I use (for deisctl/ssh)?" DEIS_TEST_SSH_KEY "${SUGGEST_DEIS_SSH_KEY:-}"
 }
 
 function configure-dns {
-  prompt "What wildcard domain name is available for me to use?" DEIS_TEST_DOMAIN
+  prompt "What wildcard domain name is available for me to use?" DEIS_TEST_DOMAIN "${SUGGEST_DEIS_TEST_DOMAIN:-}"
 }
 
 function configure-provider {

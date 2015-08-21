@@ -84,7 +84,9 @@ else
 
   possible_vars=""
 
+  echo
   rerun_log warn "General questions..."
+  echo "------------------"
 
   configure-deis-version
   possible_vars+=" VERSION"
@@ -98,7 +100,9 @@ else
   configure-registry
   possible_vars+=" DEV_REGISTRY"
 
+  echo
   rerun_log warn "Configuring operational tools..."
+  echo "------------------"
 
   configure-provider
   possible_vars+=" PROVIDER"
@@ -114,13 +118,15 @@ else
   configure-dns
   possible_vars+=" DEIS_TEST_DOMAIN"
 
+  echo
   rerun_log warn "Configuring developer tools..."
+  echo "------------------"
 
   # Consider making this a list + selection (+ ability to create a new key)
   configure-app-deployment
   possible_vars+=" DEIS_TEST_AUTH_KEY"
 
-  # save-env "${possible_vars}"
+  save-env "${possible_vars}"
 fi
 
 echo
@@ -132,7 +138,3 @@ To use the configuration outside of Rerun, you can run:
   source "${DEIS_VARS_FILE}"
 
 EOF
-
-# Done. Exit with last command exit status.
-exit $?
-

@@ -3,4 +3,4 @@
 # Tue Jul 21 15:43:05 MDT 2015
 NAME=upgrade
 DESCRIPTION="Tests upgrade path for Deis"
-OPTIONS="provider from to skip-cleanup upgrade-style"
+OPTIONS="to cleanup upgrade-style"

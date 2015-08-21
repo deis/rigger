@@ -69,7 +69,9 @@ function setup-provider-dependencies {
 }
 
 function destroy-cluster {
-  if [[ ${SKIP_CLEANUP:-} != true ]]; then
+  local force="${1:-}"
+
+  if [[ ${CLEANUP:-} == true ]] || [[ ${force} == true ]]; then
     rerun_log "Cleaning up"
     _destroy || true
   fi

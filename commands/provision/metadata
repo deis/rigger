@@ -3,4 +3,4 @@
 # Thu Jul 23 11:20:37 MDT 2015
 NAME=provision
 DESCRIPTION="Provision a cluster"
-OPTIONS="provider version skip-cleanup"
+OPTIONS="provider version cleanup"

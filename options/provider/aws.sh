@@ -1,5 +1,7 @@
 # add random characters after STACK_TAG to avoid collisions
 
+SUGGEST_DEIS_SSH_KEY="${HOME}/.ssh/deis-test"
+
 STACK_TAG="${STACK_TAG:-test}-${DEIS_TEST_ID}"
 
 export DEIS_NUM_INSTANCES=${DEIS_NUM_INSTANCES:-3}

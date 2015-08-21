@@ -9,8 +9,8 @@
 # The `command` and `usage` comments describe the command
 # and show its options.
 # 
-#/ command: tests:provision: "Provision a cluster"
-#/ usage: rerun tests:provision  --provider <vagrant>  --version <dev> [ --skip-cleanup <false>] 
+#/ command: deis:provision: "Provision a cluster"
+#/ usage: rerun deis:provision  --provider <vagrant> [ --version <master>] [ --cleanup] 
 
 # Load common functions
 # ---------------------
@@ -47,7 +47,7 @@ set -o nounset -o pipefail
 # declared by `rerun` or by the option parser function.
 
 #/ rerun-variables: RERUN, RERUN_VERSION, RERUN_MODULES, RERUN_MODULE_DIR
-#/ option-variables: PROVIDER VERSION SKIP_CLEANUP
+#/ option-variables: PROVIDER VERSION CLEANUP
 
 # The `rerun_options_parse` function processes the command line
 # arguments. Each accepted command line flag results in setting 
@@ -82,5 +82,3 @@ setup-clients "${VERSION}"
 create-cluster
 
 deploy-deis "${VERSION}"
-
-make test-smoke

@@ -9,8 +9,8 @@
 # The `command` and `usage` comments describe the command
 # and show its options.
 # 
-#/ command: accept:upgrade: "Tests upgrade path for Deis"
-#/ usage: rerun accept:upgrade  --provider <vagrant>  --from <> [ --to <master>] [ --skip-cleanup <false>]  --upgrade-style <graceful> 
+#/ command: deis:upgrade: "Tests upgrade path for Deis"
+#/ usage: rerun deis:upgrade [ --to <master>] [ --skip-cleanup] [ --upgrade-style <graceful>]
 
 # Load common functions
 # ---------------------
@@ -47,18 +47,21 @@ set -o nounset -o pipefail
 # declared by `rerun` or by the option parser function.
 
 #/ rerun-variables: RERUN, RERUN_VERSION, RERUN_MODULES, RERUN_MODULE_DIR
-#/ option-variables: PROVIDER FROM TO SKIP_CLEANUP UPGRADE_STYLE
+#/ option-variables: TO CLEANUP UPGRADE_STYLE
 
 # The `rerun_options_parse` function processes the command line
 # arguments. Each accepted command line flag results in setting 
 # one the corresponding option variables.
 
+source-defaults
+
+load-env
+
 rerun_options_parse "$@"
 
-trap destroy-cluster EXIT
+source-config
 
-# Command implementation
-# ----------------------
+trap destroy-cluster EXIT
 
 function healthcheck {
   rerun_log "Running healthcheck of previously deployed app.."
@@ -72,29 +75,10 @@ function healthcheck {
   fi
 }
 
-setup-provider "${PROVIDER}"
 setup-upgrader "${UPGRADE_STYLE}"
 
-setup-provider-dependencies
+save-var UPGRADE_STYLE
 
-destroy-cluster
+upgrade-deis "${VERSION}" "${TO}"
 
-setup-clients "${FROM}"
-
-{
-  cd ${DEIS_ROOT}
-  make discovery-url
-}
-
-create-cluster
-
-deploy-deis "${FROM}"
-
-{
-  cd ${DEIS_ROOT}
-  make test-smoke
-}
-
-upgrade-deis "${FROM}" "${TO}"
-
-healthcheck
+# healthcheck

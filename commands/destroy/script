@@ -65,8 +65,4 @@ setup-provider "${PROVIDER}"
 
 setup-provider-dependencies
 
-destroy-cluster
-
-# Done. Exit with last command exit status.
-exit $?
-
+destroy-cluster true
