@@ -143,19 +143,10 @@ function save-var {
   fi
 }
 
-function setup-test-hacks {
-  # install required go dependencies
-  go get -v github.com/golang/lint/golint
-  go get -v github.com/tools/godep
-
-  export GIT_SSH="${DEIS_ROOT}/tests/bin/git-ssh-nokeycheck.sh"
-
-  # cleanup any stale example applications
-  rm -rf ${DEIS_ROOT}/tests/example-*
-
+function setup-ssh-agent {
   # generate ssh keys if they don't already exist
-  if [ ! -f ${HOME}/.ssh/${DEIS_TEST_AUTH_KEY} ]; then
-    ssh-keygen -t rsa -f ~/.ssh/${DEIS_TEST_AUTH_KEY} -N ''
+  if [ ! -f "${DEIS_TEST_AUTH_KEY}" ]; then
+    ssh-keygen -t rsa -f "${DEIS_TEST_AUTH_KEY}" -N ''
   fi
 
   if [ ! -f ${HOME}/.ssh/deiskey ]; then
@@ -163,9 +154,17 @@ function setup-test-hacks {
   fi
 
   # prepare the SSH agent
+  rerun_log "Starting ssh-agent and adding keys..."
   ssh-add -D 2> /dev/null || eval $(ssh-agent) && ssh-add -D 2> /dev/null
-  ssh-add ${HOME}/.ssh/$DEIS_TEST_AUTH_KEY 2> /dev/null
-  ssh-add $DEIS_TEST_SSH_KEY 2> /dev/null
+  ssh-add "${DEIS_TEST_AUTH_KEY}" 2> /dev/null
+  ssh-add "${DEIS_TEST_SSH_KEY}" 2> /dev/null
+
+  export GIT_SSH="${DEIS_ROOT}/tests/bin/git-ssh-nokeycheck.sh"
+}
+
+function setup-test-hacks {
+  # cleanup any stale example applications
+  rm -rf ${DEIS_ROOT}/tests/example-*
 
   # clear the drink of choice in case the user has set it
   unset DEIS_DRINK_OF_CHOICE

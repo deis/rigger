@@ -79,6 +79,8 @@ setup-upgrader "${UPGRADE_STYLE}"
 
 save-var UPGRADE_STYLE
 
+setup-ssh-agent
+
 upgrade-deis "${VERSION}" "${TO}"
 
-# healthcheck
+healthcheck

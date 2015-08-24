@@ -62,7 +62,7 @@ function configure-registry {
 }
 
 function configure-app-deployment {
-  prompt "What ssh key should I use for application deployment?" DEIS_TEST_AUTH_KEY "deis-test"
+  prompt "What ssh key should I use for application deployment?" DEIS_TEST_AUTH_KEY "${SUGGEST_DEIS_SSH_KEY:-}"
 }
 
 function configure-ssh {

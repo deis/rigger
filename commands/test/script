@@ -61,6 +61,8 @@ rerun_options_parse "$@"
 
 source-config
 
+setup-ssh-agent
+
 setup-test-hacks
 
 {

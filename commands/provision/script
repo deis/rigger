@@ -79,6 +79,8 @@ setup-clients "${VERSION}"
   make discovery-url
 }
 
+setup-ssh-agent
+
 create-cluster
 
 deploy-deis "${VERSION}"
