@@ -12,7 +12,6 @@ function checkout-deis {
       cd "${dir}"
       git fetch
       git checkout ${version}
-      git pull
     }
   else
     rerun_log "Cloning Deis at ${dir} to ${version}"
