@@ -11,6 +11,7 @@ function checkout-deis {
     {
       cd "${dir}"
       git fetch
+      git fetch --tags
       git checkout ${version}
     }
   else
