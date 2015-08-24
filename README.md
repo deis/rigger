@@ -23,17 +23,15 @@ Then your options open up. You can have Rerun Conductor:
 - do the provisioning of machines + Deis for you:
 
 
-        ./rerun deis:provision --provider [aws, azure, gce, vagrant]
+        ./rerun deis:provision
 
 - test an existing cluster:
 
         ./rerun deis:test --type [smoke, full]
 
-- run an upgrade from a version to another version of Deis
+- run an upgrade from the current version of Deis to another version of Deis
 
-        ./rerun deis:upgrade --from <version>
-                             --to <version
-                             --provider [aws, azure, gce, vagrant]
+        ./rerun deis:upgrade --to <version>
                              --upgrade-style [graceful, inplace]
 
 - just download clients so you can muck with an existing cluster outside of Rerun Conductor
