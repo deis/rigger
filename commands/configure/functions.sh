@@ -50,9 +50,15 @@ function configure-ipaddr {
 }
 
 function configure-registry {
-  if need-deis-repo; then
-    prompt "Where can I find your Docker registry?" DEV_REGISTRY "$(guess-registry)"
-  fi
+  case ${PROVIDER} in
+    vagrant)
+      prompt "Where can I find your Docker registry?" DEV_REGISTRY "$(guess-registry)"
+      ;;
+    *)
+      prompt "What's a publicly available Docker registry I can use?" DEV_REGISTRY "${SUGGEST_DEV_REGISTRY:-}"
+      prompt "And an organization/user I can push to (include trailing /)?" IMAGE_PREFIX "${SUGGEST_IMAGE_PREFIX:-}"
+      ;;
+  esac
 }
 
 function configure-app-deployment {

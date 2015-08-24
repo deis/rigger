@@ -1,6 +1,8 @@
 # add random characters after STACK_TAG to avoid collisions
 
 SUGGEST_DEIS_SSH_KEY="${HOME}/.ssh/deis-test"
+SUGGEST_DEV_REGISTRY="registry.hub.docker.com"
+SUGGEST_IMAGE_PREFIX="${USER}/"
 
 STACK_TAG="${STACK_TAG:-test}-${DEIS_TEST_ID}"
 

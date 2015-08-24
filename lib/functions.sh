@@ -143,8 +143,6 @@ function save-var {
 }
 
 function setup-test-hacks {
-  export DEIS_TEST_AUTH_KEY=${DEIS_TEST_AUTH_KEY:-deis-test}
-
   # install required go dependencies
   go get -v github.com/golang/lint/golint
   go get -v github.com/tools/godep
