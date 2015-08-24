@@ -9,15 +9,15 @@
 # The `command` and `usage` comments describe the command
 # and show its options.
 # 
-#/ command: deis:test: ""
-#/ usage: rerun deis:test [ --type <smoke>] 
+#/ command: deis:checkout: ""
+#/ usage: rerun deis:checkout [options]
 
 # Load common functions
 # ---------------------
 
 # Load the function library for this module.
 # This loads rerun functions, too.
-. $RERUN_MODULE_DIR/lib/functions.sh test || { 
+. $RERUN_MODULE_DIR/lib/functions.sh checkout || { 
   echo >&2 "Failed loading function library." ; exit 1 ; 
 }
 
@@ -29,7 +29,7 @@
 # Trap errors and exit. The call to `rerun_die` will print the
 # the error message and exit with the error command exit status. 
 
-trap 'rerun_die $? "*** command failed: deis:test. ***"' ERR
+trap 'rerun_die $? "*** command failed: deis:checkout. ***"' ERR
 
 # Run [set] `nounset` to treat unset variables as errors. Set [pipefail]
 # so a pipeline return status is the value of the last 
@@ -47,7 +47,7 @@ set -o nounset -o pipefail
 # declared by `rerun` or by the option parser function.
 
 #/ rerun-variables: RERUN, RERUN_VERSION, RERUN_MODULES, RERUN_MODULE_DIR
-#/ option-variables: TYPE
+#/ option-variables: 
 
 # The `rerun_options_parse` function processes the command line
 # arguments. Each accepted command line flag results in setting 
@@ -61,17 +61,5 @@ rerun_options_parse "$@"
 
 source-config
 
-setup-test-hacks
+checkout-deis "${DEIS_ROOT}" "${VERSION}"
 
-{
-  cd ${DEIS_ROOT}
-
-  case "${TYPE}" in
-    smoke)
-      make test-smoke
-      ;;
-    full)
-      make test-full
-      ;;
-  esac
-}

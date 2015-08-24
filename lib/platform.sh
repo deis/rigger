@@ -1,3 +1,25 @@
+function checkout-deis {
+  local dir="${1}"
+  local version="${2}"
+
+  if is-released-version "${version}"; then
+    version="v${version}"
+  fi
+
+  if [ -d "${dir}/.git" ]; then
+    rerun_log "Updating Deis at ${dir} to ${version}"
+    {
+      cd "${dir}"
+      git fetch
+      git checkout ${version}
+      git pull
+    }
+  else
+    rerun_log "Cloning Deis at ${dir} to ${version}"
+    git clone -b "${version}" https://github.com/deis/deis.git "${dir}"
+  fi
+}
+
 function build-deis {
   local version="${1}"
 
