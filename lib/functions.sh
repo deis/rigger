@@ -166,6 +166,8 @@ function setup-test-hacks {
   # cleanup any stale example applications
   rm -rf ${DEIS_ROOT}/tests/example-*
 
+  setup-go-dependencies
+
   # clear the drink of choice in case the user has set it
   unset DEIS_DRINK_OF_CHOICE
 }
