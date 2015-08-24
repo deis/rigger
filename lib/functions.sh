@@ -136,7 +136,7 @@ function save-var {
   local var="${1}"
 
   if [ -n "${var:-}" ]; then
-    sed -e "/^export ${var}=.*$/d" -i bak ${DEIS_VARS_FILE}
+    sed -ie "/^export ${var}=.*$/d" ${DEIS_VARS_FILE}
     echo-export "${var}" >> "${DEIS_VARS_FILE}"
     sort -u "${DEIS_VARS_FILE}" -o "${DEIS_VARS_FILE}"
   fi
