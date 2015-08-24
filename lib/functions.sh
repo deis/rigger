@@ -110,7 +110,8 @@ function is-released-version {
 
 function save-env {
   local vars_to_save="${1:-}"
-  vars_to_save+=" DEIS_VARS_FILE
+  vars_to_save+=" DEISCTL_UNITS
+                  DEIS_VARS_FILE
                   DEIS_TEST_ID
                   ORIGINAL_PATH
                   PATH
@@ -136,7 +137,7 @@ function save-var {
   local var="${1}"
 
   if [ -n "${var:-}" ]; then
-    sed -ie "/^export ${var}=.*$/d" ${DEIS_VARS_FILE}
+    sed -i -e "/^export ${var}=.*$/d" ${DEIS_VARS_FILE}
     echo-export "${var}" >> "${DEIS_VARS_FILE}"
     sort -u "${DEIS_VARS_FILE}" -o "${DEIS_VARS_FILE}"
   fi
