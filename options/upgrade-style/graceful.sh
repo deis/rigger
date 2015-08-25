@@ -10,7 +10,7 @@ function upgrade-deis {
 
   setup-clients "${to}"
 
-  build-deis "${to}"
+  deploy-deis "${to}"
 
   deisctl upgrade-takeover
 }

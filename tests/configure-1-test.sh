@@ -16,7 +16,7 @@ it_fails_to_load_existing_config() {
   ! ../rerun deis:configure --type existing --file /tmp/deis/nothing-here-to-see
 }
 
-it_can_configure_against_existing_cluster() {
+xit_can_configure_against_existing_cluster() {
   VERSION="1.9.0" DEISCTL_TUNNEL="127.0.0.1" ../rerun deis:configure --type existing
 }
 
@@ -45,12 +45,19 @@ EOF
              DEIS_TEST_ID
              DEIS_TEST_ROOT
              DEIS_VARS_FILE
+             DEISCTL_UNITS
+             DEIS_TEST_AUTH_KEY
+             DEIS_TEST_SSH_KEY
+             DEIS_TEST_DOMAIN
+             DEV_REGISTRY
              GOPATH
              ORIGINAL_PATH
-             PATH"
+             PROVIDER
+             PATH
+             VERSION"
 
   for var in ${vars_list}; do
-    sed -i .bak -e "/^export ${var}=.*$/d" "${temp_vars_file}"
+    sed -i -e "/^export ${var}=.*$/d" "${temp_vars_file}"
   done
 
   if [ $(wc -l < "${temp_vars_file}") -gt 0 ]; then
