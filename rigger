@@ -23,4 +23,4 @@ fi
 export RERUN_COLOR=true
 export RERUN_MODULES="${THIS_DIR}/..:${THIS_DIR}/tmp/rerun/modules"
 
-"${RERUN_HOME}/rerun" $@
+"${RERUN_HOME}/rerun" rigger:$@
