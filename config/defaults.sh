@@ -1,4 +1,4 @@
-RERUN_DEIS_ROOT="${HOME}/.rerun-deis"
+RERUN_DEIS_ROOT="${HOME}/.rigger"
 
 PROVIDER_DIR="${RERUN_MODULE_DIR}/options/provider"
 UPGRADER_DIR="${RERUN_MODULE_DIR}/options/upgrade-style"
