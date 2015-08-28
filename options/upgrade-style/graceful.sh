@@ -6,7 +6,7 @@ function upgrade-deis {
 
   deisctl upgrade-prep
 
-  healthcheck
+  healthcheck-app "testing"
 
   setup-clients "${to}"
 

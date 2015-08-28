@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+export VARIABLES
+
+function usage {
+  cat <<EOF
+$0 <variable name>
+
+This command writes <variable name> to the rigger variable file. The variable
+file's location by default is determined by the \${RIGGER_VARS_FILE} environment
+variable.
+
+  -f <file>   write to a rigger var file (default: \${RIGGER_VARS_FILE})
+
+debug:
+ - VARIABLES="${VARIABLES}"
+ - RIGGER_VARS_FILE="${RIGGER_VARS_FILE}"
+EOF
+}
+
+function ensure-file-exists {
+  local file="${1}"
+
+  if [ ! -f ${file} ]; then
+    mkdir -p "$(dirname "${file}")"
+    touch "${file}"
+  fi
+}
+
+function check-inputs {
+  local variables_to_set="${@}"
+
+  if [ -z ${RIGGER_VARS_FILE} ]; then
+    usage
+    return 1
+  fi
+
+  local var_to_set
+  for var_to_set in ${variables_to_set}; do
+    if [ -z ${!var_to_set+x} ]; then
+      rigger-log "$(basename ${BASH_SOURCE[0]}) could not save ${var_to_set} (not set)."
+      return 1
+    fi
+  done
+}
+
+function save-var {
+  local var="${1}"
+
+  sed -i -e "/^export ${var}=.*$/d" ${RIGGER_VARS_FILE}
+  echo "export ${var}=\"${!var}\"" >> "${RIGGER_VARS_FILE}"
+  sort -u "${RIGGER_VARS_FILE}" -o "${RIGGER_VARS_FILE}"
+}
+
+function save-vars {
+  local OPTIND
+
+  while getopts ":f:h" opt; do
+    case ${opt} in
+      f)
+        RIGGER_VARS_FILE=${OPTARG}
+        ;;
+      h)
+        usage
+        return 0
+        ;;
+      \?)
+        usage
+        return 1
+        ;;
+    esac
+  done
+
+  # Get the list of servers to act upon.
+  shift $(( OPTIND - 1 ));
+  VARIABLES="${@}"
+
+  check-inputs ${VARIABLES}
+  ensure-file-exists "${RIGGER_VARS_FILE}"
+
+  for var in ${VARIABLES}; do
+    save-var "${var}"
+  done
+}
+
+save-vars ${@}

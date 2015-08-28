@@ -15,3 +15,17 @@ function check-etcd-alive {
 
   rerun_log "etcd available after ${WAIT_TIME} seconds"
 }
+
+function healthcheck-app {
+  local app_name="${1}"
+
+  rerun_log "Running healthcheck of previously deployed app: ${app_name}.."
+
+  if ! curl -s "http://${app_name}.${DEIS_TEST_DOMAIN}" | grep -q "Powered by Deis"; then
+    rerun_log error "Failed to pass healthcheck."
+    return 1
+  else
+    rerun_log info "Healthcheck succeeded."
+    return 0
+  fi
+}

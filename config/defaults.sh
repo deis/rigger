@@ -1,6 +1,21 @@
-RERUN_DEIS_ROOT="${HOME}/.rigger"
+export RIGGER_HOME="${HOME}/.rigger"
 
-PROVIDER_DIR="${RERUN_MODULE_DIR}/options/provider"
-UPGRADER_DIR="${RERUN_MODULE_DIR}/options/upgrade-style"
+export UPGRADER_DIR="${RIGGER_ROOT}/options/upgrade-style"
 
-DEIS_TEST_ENV="${RERUN_DEIS_ROOT}/vars"
+export RIGGER_CURRENT_ENV="${RIGGER_HOME}/vars"
+
+export TERRAFORM_DIR="${RIGGER_HOME}/terraform"
+
+export DEIS_ID=${DEIS_ID:-$(openssl rand -hex 5)}
+export DEIS_ID_DIR="${RIGGER_HOME}/${DEIS_ID}"
+export RIGGER_VARS_FILE="${DEIS_ID_DIR}/vars"
+
+export SUGGEST_DEV_REGISTRY="registry.hub.docker.com"
+export SUGGEST_GOPATH="${HOME}/go"
+
+export DEIS_BIN_DIR="${RIGGER_HOME}/bin"
+export DEISCLI_BIN="${DEIS_BIN_DIR}/deis"
+export DEISCTL_BIN="${DEIS_BIN_DIR}/deisctl"
+export DEISCTL_UNITS="${RIGGER_HOME}/units"
+
+export PATH="${RIGGER_ROOT}/bin:${PATH}"

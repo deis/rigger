@@ -1,16 +1,12 @@
 #!/usr/bin/env roundup
 #
-#/ usage:  rerun stubbs:test -m deis -p os [--answers <>]
+#/ usage:  rerun stubbs:test -m rigger -p os [--answers <>]
 #
 
-# Helpers
-# -------
 [[ -f ./functions.sh ]] && . ./functions.sh
 
 source ../lib/os.sh
 
-# The Plan
-# --------
 describe "os"
 
 it_identifies_os() {
