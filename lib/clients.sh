@@ -44,7 +44,13 @@ function build-deis-client {
     rerun_log "Installing deis-cli at ${DEISCLI_BIN}"
 
     mkdir -p "${DEIS_TEST_ROOT}/${version}"
-    cp "client/dist/deis" "${DEIS_TEST_ROOT}/${version}/deis"
+    if [ -f client/dist/deis ]; then # old client
+      cp "client/dist/deis" "${DEIS_TEST_ROOT}/${version}/deis"
+    elif [ -f client/deis ]; then
+      cp "client/deis" "${DEIS_TEST_ROOT}/${version}/deis"
+    else
+      rerun_die "No client available"
+    fi
 
   }
 }
