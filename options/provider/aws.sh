@@ -25,6 +25,10 @@ function aws-setup-keypair {
     aws ec2 import-key-pair --key-name deis \
         --public-key-material file://${deis_auth_key}.pub \
         --output text
+
+    if [ $? -ne 0 ]; then
+      rerun_die $? "ec2 import-key-pair failed: file://${deis_auth_key}.pub"
+    fi
   fi
 }
 
