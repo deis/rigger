@@ -23,7 +23,7 @@ function aws-setup-keypair {
   if ! aws ec2 describe-key-pairs --key-names "deis" >/dev/null ; then
     rerun_log "Importing ${deis_auth_key} keypair to EC2"
     aws ec2 import-key-pair --key-name deis \
-        --public-key-material file://~/.ssh/${deis_auth_key}.pub \
+        --public-key-material file://${deis_auth_key}.pub \
         --output text
   fi
 }
