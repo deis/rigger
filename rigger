@@ -23,4 +23,11 @@ fi
 export RERUN_COLOR=true
 export RERUN_MODULES="${THIS_DIR}/..:${THIS_DIR}/tmp/rerun/modules"
 
-"${RERUN_HOME}/rerun" rigger:$@
+if [[ ${@} =~ .*:.* ]]; then
+  run_list="${@}"
+  shift
+else
+  run_list="rigger:${@}"
+fi
+
+"${RERUN_HOME}/rerun" ${run_list}
