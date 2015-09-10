@@ -90,7 +90,12 @@ function echo-export {
 }
 
 function load-env {
-  source "${DEIS_TEST_ENV}"
+  if [ -f "${DEIS_TEST_ENV}" ]; then
+    source "${DEIS_TEST_ENV}"
+  else
+    rerun_log fatal "${DEIS_TEST_ENV} doesn't exist. Have you run rigger configure yet?"
+    exit 1
+  fi
 }
 
 function update-link {
