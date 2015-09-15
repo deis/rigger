@@ -20,6 +20,7 @@ if [ ! -f "${RERUN_EXTRACT}/rerun.tar.gz" ]; then
   )
 fi
 
+export RIGGER_ROOT="$(cd "$(dirname ${BASH_SOURCE[0]})"; pwd)"
 export RERUN_COLOR=true
 export RERUN_MODULES="${THIS_DIR}/..:${THIS_DIR}/tmp/rerun/modules"
 

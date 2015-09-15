@@ -12,9 +12,9 @@ function which-os {
 
 function guess-ipaddr {
   if [ $(which-os) == "darwin" ]; then
-    /sbin/ifconfig vboxnet2 | grep 'inet ' | awk '{print $2}'
+    ifconfig vboxnet2 | grep 'inet ' | awk '{print $2}'
   else
-    /sbin/ifconfig en0 | grep 'inet ' | awk '{print $2}'
+    ifconfig en0 | grep 'inet ' | awk '{print $2}'
   fi
 }
 

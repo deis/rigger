@@ -1,23 +1,19 @@
 #!/usr/bin/env roundup
 #
-#/ usage:  rerun stubbs:test -m deis -p configure [--answers <>]
+#/ usage:  rerun stubbs:test -m rigger -p configure [--answers <>]
 #
 
-# Helpers
-# -------
 [[ -f ./functions.sh ]] && . ./functions.sh
 
-# The Plan
-# --------
 describe "configure"
 
 it_fails_to_load_existing_config() {
   # needs file to exist
-  ! ../rerun deis:configure --type existing --file /tmp/deis/nothing-here-to-see
+  ! rigger configure --type existing --file /tmp/deis/nothing-here-to-see
 }
 
 xit_can_configure_against_existing_cluster() {
-  VERSION="1.9.0" DEISCTL_TUNNEL="127.0.0.1" ../rerun deis:configure --type existing
+  DEIS_VERSION="1.9.0" DEISCTL_TUNNEL="127.0.0.1" ../rerun deis:configure --type existing
 }
 
 it_loads_existing_config() {
@@ -30,33 +26,32 @@ ORIGINAL_PATH="${PATH}"
 DEIS_VARS_FILE="${temp_vars_file}"
 EOF
 
-  ../rerun deis:configure --type existing --file "${temp_vars_file}"
+  rigger configure --file "${temp_vars_file}"
 }
 
-it_creates_absolute_minimum_config() {
+function check-file-for-extras {
   local temp_vars_file="$(mktemp /tmp/deis-test-vars.XXX)"
 
-  ../rerun deis:configure <<EOF
-EOF
+  rigger shellinit > "${temp_vars_file}"
 
-  ../rerun deis:shellinit > "${temp_vars_file}"
+  local required_vars="DEIS_ROOT
+                       DEIS_ID
+                       DEIS_ID_DIR
+                       DEIS_VARS_FILE
+                       DEISCTL_UNITS
+                       DEIS_TEST_AUTH_KEY
+                       DEIS_TEST_SSH_KEY
+                       DEIS_TEST_DOMAIN
+                       GOPATH
+                       ORIGINAL_PATH
+                       PROVIDERs
+                       PATH
+                       VERSION"
 
-  vars_list="DEIS_ROOT
-             DEIS_TEST_ID
-             DEIS_TEST_ROOT
-             DEIS_VARS_FILE
-             DEISCTL_UNITS
-             DEIS_TEST_AUTH_KEY
-             DEIS_TEST_SSH_KEY
-             DEIS_TEST_DOMAIN
-             DEV_REGISTRY
-             GOPATH
-             ORIGINAL_PATH
-             PROVIDER
-             PATH
-             VERSION"
+  vars_list="${required_vars} ${1}"
 
   for var in ${vars_list}; do
+    grep -q "${var}" "${temp_vars_file}"
     sed -i -e "/^export ${var}=.*$/d" "${temp_vars_file}"
   done
 
@@ -65,4 +60,3 @@ EOF
     exit 1
   fi
 }
-

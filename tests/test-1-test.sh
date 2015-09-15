@@ -1,12 +1,8 @@
 #!/usr/bin/env roundup
 #
-#/ usage:  rerun stubbs:test -m deis -p test [--answers <>]
+#/ usage:  rerun stubbs:test -m rigger -p test [--answers <>]
 #
 
-# Helpers
-# -------
 [[ -f ./functions.sh ]] && . ./functions.sh
 
-# The Plan
-# --------
 describe "test"

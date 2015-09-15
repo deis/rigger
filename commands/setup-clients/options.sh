@@ -22,8 +22,6 @@ rerun_options_parse() {
     while [ "$#" -gt 0 ]; do
         OPT="$1"
         case "$OPT" in
-            --version) rerun_option_check $# $1; VERSION=$2 ; shift ;;
-            --project-dir) rerun_option_check $# $1; PROJECT_DIR=$2 ; shift ;;
             # help option
             -|--*?)
                 rerun_option_usage
@@ -37,20 +35,14 @@ rerun_options_parse() {
     done
 
     # Set defaultable options.
-    [ -z "$VERSION" ] && VERSION="$(rerun_property_get $RERUN_MODULE_DIR/options/version DEFAULT)"
+
     # Check required options are set
-    [ "$VERSION" == "$(rerun_property_get $RERUN_MODULE_DIR/options/version DEFAULT)" ] && \
-            [ -z "$PROJECT_DIR" ] && rerun_die "--project-dir or --version must be set."
 
     # If option variables are declared exportable, export them.
-    export VERSION
+
     #
     return 0
 }
 
 
 # If not already set, initialize the options variables to null.
-: ${VERSION:=}
-: ${PROJECT_DIR:=}
-
-

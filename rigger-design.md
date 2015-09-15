@@ -153,7 +153,7 @@ hold DEIS_VERSION, PROVIDER, GOPATH, DEIS_ROOT, DEIS_TEST_DOMAIN)
     export ORIGINAL_PATH="/Users/username/.rbenv/bin:/Users/username/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
     export PATH="/Users/username/go/bin:/Users/username/.rbenv/bin:/Users/username/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
     export PROVIDER="aws"
-    export VERSION="1.9.1"
+    export DEIS_VERSION="1.9.1"
 
 ### `rigger checkout`
 
@@ -213,7 +213,7 @@ with the Deis cluster in future operations, such as DEISCTL_TUNNEL:
     export PROVIDER="aws"
     export STACK_NAME="deis-test-490572dde4"
     export STACK_TAG="test-490572dde4"
-    export VERSION="1.9.1"```
+    export DEIS_VERSION="1.9.1"```
 
 ********************************************************************************
 

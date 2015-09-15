@@ -1,133 +1,74 @@
 #!/usr/bin/env bash
 
-# To implement this command, edit the "Command implementation" section below. 
-
-# Usage
-# -----
-
-# Comments prefixed with `#/` are managed by stubbs.
-# The `command` and `usage` comments describe the command
-# and show its options.
-# 
-#/ command: deis:configure: ""
-#/ usage: rerun deis:configure [ --file <>] [ --show] [ --type <new>] 
-#/
-#/ Use:
-#/    --type existing --file
-#/
-#/      to use an existing Deis config file
-#/
-#/    --type existing
-#/
-#/      interactively configure a connection to an existing Deis cluster
-#/
-#/    --type new
-#/
-#/      interactively configure a new Deis cluster
-
-# Load common functions
-# ---------------------
-
-# Load the function library for this module.
-# This loads rerun functions, too.
 . $RERUN_MODULE_DIR/lib/functions.sh configure || { 
   echo >&2 "Failed loading function library." ; exit 1 ; 
 }
 
 source ${RERUN_MODULE_DIR}/commands/configure/functions.sh
 
-# Error handling
-# ---------------
+function delete-vars-file {
+  if [ ! -z ${DEIS_ID_DIR} ]; then
+    rm -rf "${DEIS_ID_DIR}"
+  fi
+}
 
-# This script is designed to _fail-fast_.
+trap 'rerun_die $? "*** command failed: configure. ***"' ERR
+trap 'delete-vars-file && echo && exit' 1 INT TERM
 
-# Trap errors and exit. The call to `rerun_die` will print the
-# the error message and exit with the error command exit status. 
-
-trap 'rerun_die $? "*** command failed: deis:configure. ***"' ERR
-
-# Run [set] `nounset` to treat unset variables as errors. Set [pipefail]
-# so a pipeline return status is the value of the last 
-# (rightmost) command to exit with non-zero status.
-#
-# [set]: http://ss64.com/bash/set.html
-# [pipefail]: http://www.gnu.org/software/bash/manual/html_node/Pipelines.html
-
-set -o nounset -o pipefail
-
-# Command variables
-# -----------------
-
-# This command script can access the following variables
-# declared by `rerun` or by the option parser function.
-
-#/ rerun-variables: RERUN, RERUN_VERSION, RERUN_MODULES, RERUN_MODULE_DIR
-#/ option-variables: FILE SHOW TYPE
-
-# The `rerun_options_parse` function processes the command line
-# arguments. Each accepted command line flag results in setting 
-# one the corresponding option variables.
+set -eo nounset -o pipefail
 
 rerun_options_parse "$@"
 
 source-defaults
 
-# Command implementation
-# ----------------------
-
 if [ -n "${FILE:-}" ]; then
   rerun_log warn "You are using a preconfigured Deis config file from ${FILE}:"
   update-link ${FILE}
-  cat "${DEIS_TEST_ENV}"
+  cat "${RIGGER_CURRENT_ENV}"
   load-env
 else
 
-  possible_vars=""
+  save-vars RIGGER_VARS_FILE DEIS_ID DEIS_ID_DIR DEISCTL_UNITS
 
-  echo
-  rerun_log warn "General questions..."
-  echo "------------------"
-
-  configure-deis-version
-  possible_vars+=" VERSION"
+  configure-user-type
 
   configure-go
-  possible_vars+=" GOPATH"
-
   configure-deis-root
-  possible_vars+=" DEIS_ROOT"
-
-  configure-provider
-  possible_vars+=" PROVIDER"
 
   source-config
 
-  setup-provider "${PROVIDER}"
+  if [ ${DEIS_SOURCE} -ne 2 ]; then
+    checkout-deis "${DEIS_ROOT}" "${DEIS_GIT_VERSION:-${VERSION}}"
+  fi
 
-  configure-registry
-  possible_vars+=" DEV_REGISTRY
-                   IMAGE_PREFIX"
+  choose-provider
 
-  # Consider making this a list + selection (+ ability to create a new key)
+  setup-provider "${PROVIDER:-}"
+
+  configure-provider
+
+  load-env "${RIGGER_VARS_FILE}"
+
+  # if platform is being built, we need a registry
+  if [[ ${BUILD_TYPE:-} -eq 1 ]]; then
+    configure-registry
+  fi
+
   configure-ssh
-  possible_vars+=" DEIS_TEST_SSH_KEY"
 
-  # Consider making this a list + selection (+ ability to create a new key)
   configure-app-deployment
-  possible_vars+=" DEIS_TEST_AUTH_KEY"
 
   configure-dns
-  possible_vars+=" DEIS_TEST_DOMAIN"
 
-  save-env "${possible_vars}"
+  update-link "${RIGGER_VARS_FILE}"
 fi
 
 echo
-rerun_log "Rerun Deis has been configured on this system using ${DEIS_VARS_FILE}"
+rerun_log "Rerun Deis has been configured on this system using ${RIGGER_VARS_FILE}"
 
 cat <<EOF
 To use the configuration outside of Rerun, you can run:
 
-  source "${DEIS_VARS_FILE}"
+  source "${RIGGER_VARS_FILE}"
 
 EOF

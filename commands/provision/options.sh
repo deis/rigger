@@ -22,8 +22,6 @@ rerun_options_parse() {
     while [ "$#" -gt 0 ]; do
         OPT="$1"
         case "$OPT" in
-            --provider) rerun_option_check $# $1; PROVIDER=$2 ; shift ;;
-            --version) rerun_option_check $# $1; VERSION=$2 ; shift ;;
             --cleanup) CLEANUP=true; [[ ${2:-} == true ]] && shift ;;
             # help option
             -|--*?)
@@ -38,11 +36,9 @@ rerun_options_parse() {
     done
 
     # Set defaultable options.
-    [ -z "$PROVIDER" ] && PROVIDER="$(rerun_property_get $RERUN_MODULE_DIR/options/provider DEFAULT)"
-    [ -z "$VERSION" ] && VERSION="$(rerun_property_get $RERUN_MODULE_DIR/options/version DEFAULT)"
     [ -z "$CLEANUP" ] && CLEANUP="$(rerun_property_get $RERUN_MODULE_DIR/options/cleanup DEFAULT)"
     # Check required options are set
-    [ -z "$PROVIDER" ] && { echo >&2 "missing required option: --provider" ; return 2 ; }
+
     # If option variables are declared exportable, export them.
 
     #
@@ -51,8 +47,6 @@ rerun_options_parse() {
 
 
 # If not already set, initialize the options variables to null.
-: ${PROVIDER:=}
-: ${VERSION:=}
 : ${CLEANUP:=}
 
 

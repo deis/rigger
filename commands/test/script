@@ -1,57 +1,12 @@
 #!/usr/bin/env bash
 
-# To implement this command, edit the "Command implementation" section below. 
-
-# Usage
-# -----
-
-# Comments prefixed with `#/` are managed by stubbs.
-# The `command` and `usage` comments describe the command
-# and show its options.
-# 
-#/ command: deis:test: ""
-#/ usage: rerun deis:test [ --type <smoke>] 
-
-# Load common functions
-# ---------------------
-
-# Load the function library for this module.
-# This loads rerun functions, too.
 . $RERUN_MODULE_DIR/lib/functions.sh test || { 
   echo >&2 "Failed loading function library." ; exit 1 ; 
 }
 
-# Error handling
-# ---------------
-
-# This script is designed to _fail-fast_.
-
-# Trap errors and exit. The call to `rerun_die` will print the
-# the error message and exit with the error command exit status. 
-
 trap 'rerun_die $? "*** command failed: deis:test. ***"' ERR
 
-# Run [set] `nounset` to treat unset variables as errors. Set [pipefail]
-# so a pipeline return status is the value of the last 
-# (rightmost) command to exit with non-zero status.
-#
-# [set]: http://ss64.com/bash/set.html
-# [pipefail]: http://www.gnu.org/software/bash/manual/html_node/Pipelines.html
-
-set -o nounset -o pipefail
-
-# Command variables
-# -----------------
-
-# This command script can access the following variables
-# declared by `rerun` or by the option parser function.
-
-#/ rerun-variables: RERUN, RERUN_VERSION, RERUN_MODULES, RERUN_MODULE_DIR
-#/ option-variables: TYPE
-
-# The `rerun_options_parse` function processes the command line
-# arguments. Each accepted command line flag results in setting 
-# one the corresponding option variables.
+set -eo nounset -o pipefail
 
 source-defaults
 
@@ -65,15 +20,20 @@ setup-ssh-agent
 
 setup-test-hacks
 
-{
+(
   cd ${DEIS_ROOT}
 
   case "${TYPE}" in
-    smoke)
-      make test-smoke
+    scaleup)
+      for i in $(seq 1 5); do
+        deis scale web=10
+        sleep 3
+        deis scale web=0
+        sleep 3
+      done
       ;;
-    full)
-      make test-full
+    *)
+      make test-${TYPE}
       ;;
   esac
-}
+)

@@ -8,10 +8,8 @@
     return 1
 }
 
-# Check usage. Argument should be command name.
 [[ $# = 1 ]] || rerun_option_usage
 
-# Source the option parser script.
 #
 if [[ -r $RERUN_MODULE_DIR/commands/$1/options.sh ]] 
 then
@@ -20,27 +18,25 @@ then
     }
 fi
 
-# - - -
-# Your functions declared here.
-# - - -
+function is-released-version {
+  [[ ${1} =~ ^([0-9]+\.){0,2}[0-9]$ ]] && return 0
+}
 
 function check-registry {
-  if ! curl -s $DEV_REGISTRY 1> /dev/null && ! curl -s https://$DEV_REGISTRY 1> /dev/null; then
+  if ! curl -s "${DEV_REGISTRY}" 1> /dev/null && ! curl -s "https://${DEV_REGISTRY}" 1> /dev/null; then
     rerun_log error "DEV_REGISTRY is not accessible, exiting..."
     exit 1
   fi
 }
 
-function not-implemented {
-  rerun_log "No implementation of ${FUNCNAME[1]} in ${PROVIDER}"
-}
-
 function setup-provider {
 # This loads the provider's implementations of the provider interface
-  local provider="${1}"
+  source "providers/interface.sh"
+  save-vars PROVIDER
+}
 
-  source "${PROVIDER_DIR}/interface.sh"
-  source "${PROVIDER_DIR}/${provider}.sh"
+function configure-provider {
+  _configure
 }
 
 function setup-upgrader {
@@ -48,6 +44,14 @@ function setup-upgrader {
 
   source "${UPGRADER_DIR}/interface.sh"
   source "${UPGRADER_DIR}/${upgrader}.sh"
+}
+
+function render-shell-template {
+  local command=$(echo -e "cat <<TEMPLATE
+$(< "${1}")
+TEMPLATE
+")
+  eval "${command}"
 }
 
 function source-shared {
@@ -72,13 +76,11 @@ function destroy-cluster {
   local force="${1:-}"
 
   if [[ ${CLEANUP:-} == true ]] || [[ ${force} == true ]]; then
-    rerun_log "Cleaning up"
     _destroy || true
   fi
 }
 
 function create-cluster {
-  save-var PROVIDER
   _create
 }
 
@@ -90,10 +92,13 @@ function echo-export {
 }
 
 function load-env {
-  if [ -f "${DEIS_TEST_ENV}" ]; then
-    source "${DEIS_TEST_ENV}"
+  local environment="${1:-${RIGGER_CURRENT_ENV}}"
+
+  if [ -f "${environment}" ]; then
+    rerun_log debug "Sourcing ${environment}"
+    source "${environment}"
   else
-    rerun_log fatal "${DEIS_TEST_ENV} doesn't exist. Have you run rigger configure yet?"
+    rerun_log fatal "${environment} doesn't exist. Have you run rigger configure yet?"
     exit 1
   fi
 }
@@ -102,50 +107,15 @@ function update-link {
   local file="${1}"
 
   if [ -f "${file}" ]; then
-    rerun_log debug "Linking ${DEIS_TEST_ENV} to ${file}"
-    ln -fs "${file}" "${DEIS_TEST_ENV}"
+    rerun_log debug "Linking ${RIGGER_CURRENT_ENV} to ${file}"
+    ln -fs "${file}" "${RIGGER_CURRENT_ENV}"
   else
     rerun_die "${file} does not exist."
   fi
 }
 
-function is-released-version {
-  [[ ${1} =~ ^([0-9]+\.){0,2}[0-9]$ ]] && return 0
-}
-
-function save-env {
-  local vars_to_save="${1:-}"
-  vars_to_save+=" DEISCTL_UNITS
-                  DEIS_VARS_FILE
-                  DEIS_TEST_ID
-                  ORIGINAL_PATH
-                  PATH
-                  DEIS_TEST_ROOT
-                  VERSION"
-
-  mkdir -p "${DEIS_TEST_ROOT}"
-  cat /dev/null > "${DEIS_VARS_FILE}"
-
-  for var in ${vars_to_save}; do
-    if [ -z "${!var:-}" ]; then
-      rerun_log debug "${var} is null, therefore not writing to ${DEIS_VARS_FILE}"
-    else
-      save-var "${var}"
-    fi
-  done
-
-  sort -u "${DEIS_VARS_FILE}" -o "${DEIS_VARS_FILE}"
-  update-link "${DEIS_VARS_FILE}"
-}
-
-function save-var {
-  local var="${1}"
-
-  if [ -n "${var:-}" ]; then
-    sed -i -e "/^export ${var}=.*$/d" ${DEIS_VARS_FILE}
-    echo-export "${var}" >> "${DEIS_VARS_FILE}"
-    sort -u "${DEIS_VARS_FILE}" -o "${DEIS_VARS_FILE}"
-  fi
+function save-vars {
+  rigger-save-vars -f "${RIGGER_VARS_FILE}" ${@}
 }
 
 function setup-ssh-agent {

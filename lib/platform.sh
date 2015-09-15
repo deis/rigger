@@ -8,30 +8,31 @@ function checkout-deis {
 
   if [ -d "${dir}/.git" ]; then
     rerun_log "Updating Deis at ${dir} to ${version}"
-    {
+    (
       cd "${dir}"
       git fetch
       git fetch --tags
       git checkout ${version}
-    }
+      git pull origin ${version}
+    )
   else
     rerun_log "Cloning Deis at ${dir} to ${version}"
-    git clone -b "${version}" https://github.com/deis/deis.git "${dir}"
+    git clone --depth 1 -b "${version}" https://github.com/deis/deis.git "${dir}"
   fi
 }
 
 function build-deis {
   local version="${1}"
 
-  if is-released-version "${version}"; then
+  if [[ ${BUILD_TYPE:-} -ne 1 ]]; then # client-only build
     deisctl config platform set version="v${version}"
   else
     check-registry
-    {
+    (
       setup-go-dependencies
       cd "${DEIS_ROOT}"
       make build dev-release
-    }
+    )
   fi
 }
 
