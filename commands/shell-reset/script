@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+. $RERUN_MODULE_DIR/lib/functions.sh shell-reset || { 
+  echo >&2 "Failed loading function library." ; exit 1 ; 
+}
+
+trap 'rerun_die $? "*** command failed: shell-reset. ***"' ERR
+
+set -eo nounset -o pipefail
+
+rerun_options_parse "$@"
+
+source-defaults
+
+unload-env "${FILE:-${RIGGER_CURRENT_ENV}}"

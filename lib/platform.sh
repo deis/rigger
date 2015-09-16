@@ -1,6 +1,7 @@
 function checkout-deis {
   local dir="${1}"
-  local version="${2}"
+  local version="${2:-master}"
+  local repo="${3:-${DEIS_GIT_REPO}}"
 
   if is-released-version "${version}"; then
     version="v${version}"
@@ -17,7 +18,7 @@ function checkout-deis {
     )
   else
     rerun_log "Cloning Deis at ${dir} to ${version}"
-    git clone --depth 1 -b "${version}" https://github.com/deis/deis.git "${dir}"
+    git clone --depth 1 -b "${version}" ${repo} "${dir}"
   fi
 }
 
@@ -27,11 +28,12 @@ function build-deis {
   if [[ ${BUILD_TYPE:-} -ne 1 ]]; then # client-only build
     deisctl config platform set version="v${version}"
   else
+    check-docker
     check-registry
     (
       setup-go-dependencies
       cd "${DEIS_ROOT}"
-      make build dev-release
+      make build
     )
   fi
 }
@@ -44,7 +46,12 @@ function deploy-deis {
   deisctl config platform set domain="${DEIS_TEST_DOMAIN}"
   deisctl config platform set sshPrivateKey="${DEIS_TEST_SSH_KEY}"
 
-  build-deis "${version}"
+  if [[ ${BUILD_TYPE:-} -eq 1 ]]; then # platform was built
+    (
+      cd "${DEIS_ROOT}"
+      make dev-release
+    )
+  fi
 
   deisctl install platform
   deisctl start platform

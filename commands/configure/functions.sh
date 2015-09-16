@@ -37,11 +37,11 @@ function configure-user-type {
       choose-build-type
       ;;
     3) # Git based version
-      prompt "Enter Deis git repo url:" DEIS_GIT_REPO "https://github.com/deis/deis.git"
-      prompt "Enter Deis git branch/tag/sha1:" DEIS_GIT_VERSION "master"
+      configure-deis-repo
       choose-build-type
       export GOPATH="${DEIS_ID_DIR}/go"
-      save-vars DEIS_GIT_REPO GOPATH
+      export DEIS_ROOT="${GOPATH}/src/github.com/deis/deis"
+      save-vars GOPATH DEIS_ROOT
       ;;
   esac
   
@@ -59,8 +59,9 @@ function configure-deis-version {
   save-vars VERSION
 }
 
-function configure-deis-repo-sha {
-  prompt "Enter Deis repo sha:" DEIS_GIT_VERSION master
+function configure-deis-repo {
+  prompt "Enter Deis git repo url:" DEIS_GIT_REPO "https://github.com/deis/deis.git"
+  prompt "Enter Deis git branch/tag/sha1:" DEIS_GIT_VERSION master
 
   export VERSION="${DEIS_GIT_VERSION}"
   save-vars DEIS_GIT_VERSION VERSION
@@ -96,10 +97,11 @@ function configure-registry {
     *)
       prompt "What's a publicly available Docker registry I can use?" DEV_REGISTRY "${SUGGEST_DEV_REGISTRY:-}"
       prompt "And an organization/user I can push to (include trailing /)?" IMAGE_PREFIX "${SUGGEST_IMAGE_PREFIX:-}"
+      save-vars IMAGE_PREFIX
       ;;
   esac
 
-  save-vars DEV_REGISTRY IMAGE_PREFIX
+  save-vars DEV_REGISTRY
 }
 
 function configure-app-deployment {

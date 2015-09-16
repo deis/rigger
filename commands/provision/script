@@ -36,4 +36,6 @@ create-cluster
 
 load-env "${RIGGER_VARS_FILE}"
 
+build-deis "${VERSION}"
+
 deploy-deis "${VERSION}"

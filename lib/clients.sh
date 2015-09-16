@@ -1,7 +1,7 @@
 function setup-clients {
   local version="${1}"
   
-  if [[ ${BUILD_TYPE:-} -eq 2 ]]; then
+  if [[ ${BUILD_TYPE:-} -ge 2 ]]; then
     version="from-path"
   fi
 

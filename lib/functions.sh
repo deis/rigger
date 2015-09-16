@@ -29,6 +29,13 @@ function check-registry {
   fi
 }
 
+function check-docker {
+  if ! docker ps; then
+    rerun_log error "Docker is not available to the build process. Exiting."
+    exit 1
+  fi
+}
+
 function setup-provider {
 # This loads the provider's implementations of the provider interface
   source "providers/interface.sh"
@@ -100,6 +107,18 @@ function load-env {
   else
     rerun_log fatal "${environment} doesn't exist. Have you run rigger configure yet?"
     exit 1
+  fi
+}
+
+function unload-env {
+  local environment="${1:-${RIGGER_CURRENT_ENV}}"
+
+  if [ -f "${environment}" ]; then
+    rerun_log debug "Unsetting all variables in ${environment}"
+    local var
+    echo "unset $(cat "${environment}" | grep -v 'export PATH' \
+          | awk '{print $2}' \
+          | cut -s -d = -f 1 | xargs)"
   fi
 }
 
