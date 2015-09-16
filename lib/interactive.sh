@@ -1,3 +1,14 @@
+function skip-prompt-if-set {
+  local variable="${1}"
+
+  if [ ! -z ${!variable:-} ]; then
+    rerun_log warn "${variable} already set to ${!variable}. Skipping prompt."
+    return 1
+  else
+    return 0
+  fi
+}
+
 function choice-prompt {
   local question="${1}"
   local options=("${!2}")
@@ -5,6 +16,8 @@ function choice-prompt {
   local return_var="${4}"
 
   local default_text="${options[$(expr ${default} - 1)]}"
+
+  skip-prompt-if-set ${return_var} || return 0
 
   local input
   while [ -z "${input:-}" ]; do
@@ -41,27 +54,25 @@ function prompt {
   local return_var="${2}"
   local default="${3:-}"
 
-  if [ -z "${!return_var:-}" ]; then
+  skip-prompt-if-set ${return_var} || return 0
 
-    local input
+  local input
 
-    while [ -z "${input:-}" ]; do
+  while [ -z "${input:-}" ]; do
 
-      if [ -z ${default} ]; then
-        rerun_log "-> ${question} ${return_var} (no default)"
-      else
-        rerun_log "-> ${question} ${return_var} [ ${default} ]"
-      fi
+    if [ -z ${default} ]; then
+      rerun_log "-> ${question} ${return_var} (no default)"
+    else
+      rerun_log "-> ${question} ${return_var} [ ${default} ]"
+    fi
 
-      read input
+    read input
 
-      [ -n "${default}" ] && break
+    [ -n "${default}" ] && break
 
-    done
+  done
 
-    eval "export ${return_var}=${input:-${default}}"
+  eval "export ${return_var}=${input:-${default}}"
 
-    echo "You chose: ${!return_var}"
-
-  fi
+  echo "You chose: ${!return_var}"
 }
