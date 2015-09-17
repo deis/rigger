@@ -87,7 +87,7 @@ function configure-deis-root {
 function configure-registry {
   case ${PROVIDER:-} in
     vagrant)
-      prompt "Where can I find your Docker registry?" DEV_REGISTRY "$(guess-registry)"
+      create-dev-registry
       ;;
     *)
       prompt "What's a publicly available Docker registry I can use?" DEV_REGISTRY "${SUGGEST_DEV_REGISTRY:-}"

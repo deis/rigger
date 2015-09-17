@@ -1,9 +1,5 @@
 function setup-clients {
   local version="${1}"
-  
-  if [[ ${BUILD_TYPE:-} -ge 2 ]]; then
-    version="from-path"
-  fi
 
   setup-deis-client "${version}"
   setup-deisctl-client "${version}"
