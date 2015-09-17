@@ -29,6 +29,9 @@ function configure-user-type {
   case ${DEIS_SOURCE} in
     1) # released version
       configure-deis-version
+      export DEIS_GIT_REPO="${SUGGEST_DEIS_GIT_REPO}"
+      export DEIS_GIT_VERSION="${VERSION}"
+      configure-deis-repo
       export GOPATH="${DEIS_ID_DIR}/go"
       export DEIS_ROOT="${GOPATH}/src/github.com/deis/deis"
       save-vars GOPATH DEIS_ROOT
@@ -49,10 +52,6 @@ function configure-user-type {
   save-vars DEIS_SOURCE
 }
 
-function configure-deisctl-tunnel {
-  prompt "Enter Deisctl tunnel IP address:" DEISCTL_TUNNEL 127.0.0.1:2222
-}
-
 function configure-deis-version {
   prompt "Enter Deis version:" VERSION 1.10.0
   export VERSION
@@ -60,11 +59,11 @@ function configure-deis-version {
 }
 
 function configure-deis-repo {
-  prompt "Enter Deis git repo url:" DEIS_GIT_REPO "https://github.com/deis/deis.git"
-  prompt "Enter Deis git branch/tag/sha1:" DEIS_GIT_VERSION master
+  prompt "Enter Deis git repo url:" DEIS_GIT_REPO "${SUGGEST_DEIS_GIT_REPO}"
+  prompt "Enter Deis git branch/tag/sha1:" DEIS_GIT_VERSION "${SUGGEST_DEIS_GIT_VERSION}"
 
   export VERSION="${DEIS_GIT_VERSION}"
-  save-vars DEIS_GIT_VERSION VERSION
+  save-vars DEIS_GIT_REPO DEIS_GIT_VERSION VERSION
 }
 
 function configure-go {
@@ -83,10 +82,6 @@ function configure-deis-root {
   prompt "Where is the Deis repository located?" DEIS_ROOT "${GOPATH:-${HOME}}/src/github.com/deis/deis"
 
   save-vars DEIS_ROOT
-}
-
-function configure-ipaddr {
-  prompt "What's the ip address of your Docker environment?" HOST_IPADDR "$(guess-ipaddr)"
 }
 
 function configure-registry {
