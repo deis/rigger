@@ -16,14 +16,15 @@ function run-provider-step {
     rerun_log debug "Sourcing ${file}.sh"
     source "${file}.sh"
   else
-    not-implemented ${FUNCNAME[1]}
+    not-implemented ${file}
   fi
 }
 
 function not-implemented {
-  local function_name="${1:-${FUNCNAME[1]}}"
+  local file="${1}"
 
-  rerun_log warn "No implementation of ${function_name} in ${PROVIDER:-}"
+  rerun_log fatal "No implementation for ${FUNCNAME[2]} found at ${file}"
+  exit 1
 }
 
 function _setup-provider-dependencies {
