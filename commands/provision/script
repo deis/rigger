@@ -22,6 +22,8 @@ setup-provider "${PROVIDER}"
 
 setup-provider-dependencies
 
+load-env "${RIGGER_VARS_FILE}"
+
 setup-clients "${VERSION}"
 
 (

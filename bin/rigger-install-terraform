@@ -9,6 +9,11 @@ function install-terraform {
   local terraform_base_url="https://dl.bintray.com/mitchellh/terraform"
   local terraform_filename
 
+  if command -v terraform &>/dev/null; then
+    rigger-log "Terraform already available ($(command -v terraform))."
+    return 0
+  fi
+
   case ${arch} in
     x86_64)
       arch=amd64
@@ -34,14 +39,9 @@ function install-terraform {
     fi
   )
 
-  if ! command -v terraform &>/dev/null; then
-    export PATH="${TERRAFORM_DIR}:${PATH}"
-    rigger-save-vars PATH
-    rigger-log "Terraform in ${TERRAFORM_DIR} added to PATH."
-  else
-    rigger-log "Terraform already installed ($(command -v terraform))."
-  fi
+  export PATH="${TERRAFORM_DIR}:${PATH}"
+  rigger-save-vars PATH
+  rigger-log "Terraform in ${TERRAFORM_DIR} added to PATH."
 }
 
 install-terraform
-
