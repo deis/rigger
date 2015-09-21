@@ -39,6 +39,13 @@ else
 
   if [ ${DEIS_SOURCE} -ne 2 ]; then
     checkout-deis "${DEIS_ROOT}" "${DEIS_GIT_VERSION:-${VERSION}}"
+  else
+    (
+      cd ${DEIS_ROOT}
+      export DEIS_GIT_VERSION="$(git describe --long --dirty --abbrev=10 --tags --always)"
+      export VERSION="${DEIS_GIT_VERSION}"
+      save-vars DEIS_GIT_VERSION VERSION
+    )
   fi
 
   choose-provider
@@ -51,7 +58,9 @@ else
 
   # if platform is being built, we need a registry
   if [[ ${BUILD_TYPE:-} -eq 1 ]]; then
+    create-docker-env
     configure-registry
+    activate-docker-machine-env
   fi
 
   configure-ssh

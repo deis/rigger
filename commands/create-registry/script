@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+. $RERUN_MODULE_DIR/lib/functions.sh create-registry || { 
+  echo >&2 "Failed loading function library." ; exit 1 ; 
+}
+
+trap 'rerun_die $? "*** command failed: deis:destroy. ***"' ERR
+
+set -eo nounset -o pipefail
+
+source-defaults
+
+load-env
+
+rerun_options_parse "$@"
+
+source-config
+
+create-dev-registry
