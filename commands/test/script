@@ -4,7 +4,7 @@
   echo >&2 "Failed loading function library." ; exit 1 ; 
 }
 
-trap 'rerun_die $? "*** command failed: deis:test. ***"' ERR
+trap 'rerun_die $? "*** command failed: test. ***"' ERR
 
 set -eo nounset -o pipefail
 

@@ -23,8 +23,6 @@ rerun_options_parse() {
         OPT="$1"
         case "$OPT" in
             --file) rerun_option_check $# $1; FILE=$2 ; shift ;;
-            --show) SHOW=true; [[ ${2:-} == true ]] && shift ;;
-            --type) rerun_option_check $# $1; TYPE=$2 ; shift ;;
             # help option
             -|--*?)
                 rerun_option_usage
@@ -38,19 +36,16 @@ rerun_options_parse() {
     done
 
     # Set defaultable options.
-    [ -z "$TYPE" ] && TYPE="$(rerun_property_get $RERUN_MODULE_DIR/options/type DEFAULT)"
+
     # Check required options are set
 
     # If option variables are declared exportable, export them.
 
-    #
     return 0
 }
 
 
 # If not already set, initialize the options variables to null.
 : ${FILE:=}
-: ${SHOW:=}
-: ${TYPE:=}
 
 
