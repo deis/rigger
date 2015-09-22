@@ -1,4 +1,4 @@
-export RIGGER_HOME="${HOME}/.rigger"
+export RIGGER_HOME="${RIGGER_HOME:-${HOME}/.rigger}"
 
 export UPGRADER_DIR="${RIGGER_ROOT}/options/upgrade-style"
 

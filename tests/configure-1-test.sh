@@ -7,17 +7,18 @@
 
 describe "configure"
 
+TMP=$(mktemp -d "/tmp/rigger_test_root.XXX")
+export RIGGER_HOME="${TMP}"
+
+trap "rm -rf ${TMP}" EXIT
+
 it_fails_to_load_existing_config() {
   # needs file to exist
-  ! rigger configure --type existing --file /tmp/deis/nothing-here-to-see
-}
-
-xit_can_configure_against_existing_cluster() {
-  DEIS_VERSION="1.9.0" DEISCTL_TUNNEL="127.0.0.1" ../rerun deis:configure --type existing
+  ! rigger configure --file /tmp/deis/nothing-to-see-here
 }
 
 it_loads_existing_config() {
-  local temp_vars_file="$(mktemp /tmp/deis-test-vars.XXX)"
+  local temp_vars_file="$(mktemp ${TMP}/rigger_existing_config.XXX)"
 
   cat <<EOF > "${temp_vars_file}"
 GOPATH="${HOME}"
@@ -30,7 +31,7 @@ EOF
 }
 
 function check-file-for-extras {
-  local temp_vars_file="$(mktemp /tmp/deis-test-vars.XXX)"
+  local temp_vars_file="$(mktemp /${TMP}/file_extras_test.XXX)"
 
   rigger shellinit > "${temp_vars_file}"
 

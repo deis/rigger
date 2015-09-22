@@ -9,6 +9,8 @@ describe "shell-reset"
 
 it_would_unset_all_vars_but_path() {
   local varsfile="$(mktemp /tmp/tempvars.XXXX)"
+  trap "rm ${varsfile}" EXIT
+
   cat <<EOF > "${varsfile}"
 export PATH="mypath!:saveit!"
 export DEIS_ROOT="some_path_here"

@@ -1,7 +1,8 @@
 function activate-docker-machine-env {
-  eval "$(docker-machine env deis-registry)"
-
-  save-vars DOCKER_TLS_VERIFY DOCKER_HOST DOCKER_CERT_PATH DOCKER_MACHINE_NAME
+  if [ $(which-os) == darwin ]; then
+    eval "$(docker-machine env deis-registry)"
+    save-vars DOCKER_TLS_VERIFY DOCKER_HOST DOCKER_CERT_PATH DOCKER_MACHINE_NAME
+  fi
 }
 
 function create-dev-registry {
@@ -11,7 +12,8 @@ function create-dev-registry {
     make dev-registry > /dev/null
   )
 
-  export DEV_REGISTRY="$(docker-machine ip deis-registry):5000"
+  local host_ip="${HOST_IPADDR:-$(get-machine-ip)}"
+  export DEV_REGISTRY="${host_ip}:5000"
   save-vars DEV_REGISTRY
 }
 

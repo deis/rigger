@@ -22,3 +22,11 @@ it_identifies_os() {
 
   [ $(which-os) == "linux" ]
 }
+
+it_identifies_machines_ip() {
+  local ip=$(get-machine-ip)
+
+  # 127 would imply localhost
+  # 172 would imply default docker bridge
+  ! [[ ${ip} =~ (127)|(172).* ]]
+}
