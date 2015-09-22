@@ -8,6 +8,7 @@
 describe "setup-clients"
 
 source ../lib/clients.sh
+source ../lib/platform.sh
 
 function save-vars {
   :

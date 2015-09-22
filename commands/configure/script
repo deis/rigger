@@ -56,12 +56,9 @@ else
 
   load-env "${RIGGER_VARS_FILE}"
 
-  # if platform is being built, we need a registry
-  if [[ ${BUILD_TYPE:-} -eq 1 ]]; then
-    create-docker-env
-    configure-registry
-    activate-docker-machine-env
-  fi
+  create-docker-env
+  configure-registry
+  activate-docker-machine-env
 
   configure-ssh
 
