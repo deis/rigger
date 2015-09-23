@@ -9,7 +9,9 @@ describe "platform"
 
 source ../lib/platform.sh
 
-TEST_ROOT="$(mktemp -d /tmp/roundup-test.XXX)"
+TEST_ROOT="$(mktemp -d /tmp/platform-test.XXX)"
+
+trap "rm -rf ${TEST_ROOT}" EXIT
 
 it_deploys_deis_platform() {
 
