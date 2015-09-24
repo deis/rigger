@@ -1,21 +1,3 @@
-function choose-build-type {
-  export BUILD_TYPE
-  local options=(
-                  "full platform"
-                  "clients only"
-                )
-
-  choice-prompt "What would you like me to build out of that repository?" options[@] 1 BUILD_TYPE
-
-  case ${BUILD_TYPE} in
-    2) # clients only
-      configure-deis-version
-      ;;
-  esac
-
-  save-vars BUILD_TYPE
-}
-
 function configure-user-type {
   local answer
   local options=(
@@ -37,11 +19,9 @@ function configure-user-type {
       save-vars GOPATH DEIS_ROOT
       ;;
     2) # path based version
-      choose-build-type
       ;;
     3) # Git based version
       configure-deis-repo
-      choose-build-type
       export GOPATH="${DEIS_ID_DIR}/go"
       export DEIS_ROOT="${GOPATH}/src/github.com/deis/deis"
       save-vars GOPATH DEIS_ROOT

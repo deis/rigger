@@ -18,10 +18,6 @@ then
     }
 fi
 
-function is-released-version {
-  [[ ${1} =~ ^([0-9]+\.){0,2}[0-9]$ ]] && return 0
-}
-
 function check-registry {
   if ! curl -s "${DEV_REGISTRY}" 1> /dev/null && ! curl -s "https://${DEV_REGISTRY}" 1> /dev/null; then
     rerun_log error "DEV_REGISTRY is not accessible, exiting..."

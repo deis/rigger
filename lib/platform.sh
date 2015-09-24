@@ -1,3 +1,7 @@
+function is-released-version {
+  [[ ${1} =~ ^([0-9]+\.){0,2}[0-9]$ ]] && return 0
+}
+
 function checkout-deis {
   local dir="${1}"
   local version="${2:-master}"
@@ -25,7 +29,7 @@ function checkout-deis {
 function build-deis {
   local version="${1}"
 
-  if [[ ${BUILD_TYPE:-} -ne 1 ]]; then # client-only build
+  if is-released-version "${version}"; then
     deisctl config platform set version="v${version}"
   else
     check-docker
@@ -46,7 +50,7 @@ function deploy-deis {
   deisctl config platform set domain="${DEIS_TEST_DOMAIN}"
   deisctl config platform set sshPrivateKey="${DEIS_TEST_SSH_KEY}"
 
-  if [[ ${BUILD_TYPE:-} -eq 1 ]]; then # platform was built
+  if ! is-released-version "${version}"; then
     (
       cd "${DEIS_ROOT}"
       make dev-release

@@ -34,12 +34,20 @@ it_deploys_deis_platform() {
     return 1
   }
 
+  function is-released-version {
+    return 1
+  }
+
   function build-deis {
     deis_built=0
   }
 
   function _check-cluster {
     cluster_checked=0
+  }
+
+  function make {
+    [ ${1} == "dev-release" ] && return 0
   }
 
   deploy-deis

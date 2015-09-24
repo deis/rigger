@@ -59,7 +59,7 @@ function setup-deis-client {
 
   rerun_log "Installing deis-cli (${version}) at ${DEISCLI_BIN}..."
 
-  if [ -z "${BUILD_TYPE:-}" ]; then
+  if is-released-version "${version}"; then
     download-client "deis-cli" "${version}" "${DEIS_ID_DIR}/${version}"
   else
     build-deis-client "${version}" "${DEIS_ROOT}"
@@ -115,7 +115,7 @@ function build-deisctl {
 function setup-deisctl-client {
   local version="${1}"
 
-  if [ -z "${BUILD_TYPE:-}" ]; then
+  if is-released-version "${version}"; then
     download-client "deisctl" "${version}" "${DEIS_ID_DIR}/${version}"
     move-units "${version}"
   else
