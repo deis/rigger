@@ -76,11 +76,7 @@ function setup-provider-dependencies {
 }
 
 function destroy-cluster {
-  local force="${1:-}"
-
-  if [[ ${CLEANUP:-} == true ]] || [[ ${force} == true ]]; then
-    _destroy || true
-  fi
+  _destroy
 }
 
 function create-cluster {
@@ -160,6 +156,10 @@ function setup-test-hacks {
 
   # clear the drink of choice in case the user has set it
   unset DEIS_DRINK_OF_CHOICE
+}
+
+function rigger {
+  ${RIGGER_ROOT}/rigger ${@}
 }
 
 source-shared

@@ -16,8 +16,6 @@ rerun_options_parse "$@"
 
 source-config
 
-trap destroy-cluster EXIT
-
 setup-provider "${PROVIDER}"
 
 setup-provider-dependencies
@@ -29,15 +27,10 @@ setup-clients "${VERSION}"
 (
   cd ${DEIS_ROOT}
   make discovery-url
-  grep -q discovery contrib/coreos/user-data # ensure I have a discovery token
 )
 
 setup-ssh-agent
 
 create-cluster
 
-load-env "${RIGGER_VARS_FILE}"
-
-build-deis "${VERSION}"
-
-deploy-deis "${VERSION}"
+rigger deploy

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -eo pipefail -o nounset
+
+function render-shell-template {
+  local command=$(echo -e "cat <<TEMPLATE
+$(< "${1}")
+TEMPLATE
+")
+  eval "${command}"
+}
+
+render-shell-template "${1}"

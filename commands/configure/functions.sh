@@ -2,8 +2,8 @@ function configure-user-type {
   local answer
   local options=(
                   "Release"
-                  "Path (I'll just build whatever you have here)"
-                  "Git (I'll manage the Git repo in a path of your choosing)"
+                  "Path"
+                  "Git"
                 )
 
   choice-prompt "Where can I find the version of Deis you want?" options[@] 1 DEIS_SOURCE
@@ -80,7 +80,7 @@ function configure-registry {
 }
 
 function configure-app-deployment {
-  prompt "What ssh key should I use for application deployment?" DEIS_TEST_AUTH_KEY "${SUGGEST_DEIS_SSH_KEY:-}"
+  prompt "What ssh key should I use for application deployment?" DEIS_TEST_AUTH_KEY "${DEIS_TEST_SSH_KEY:-}"
   save-vars DEIS_TEST_AUTH_KEY
 }
 
