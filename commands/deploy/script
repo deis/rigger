@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-. $RERUN_MODULE_DIR/lib/functions.sh destroy || { 
+. $RERUN_MODULE_DIR/lib/functions.sh deploy || { 
   echo >&2 "Failed loading function library." ; exit 1 ; 
 }
 
-trap 'rerun_die $? "*** command failed: destroy. ***"' ERR
+trap 'rerun_die $? "*** command failed: deploy. ***"' ERR
 
 set -eo nounset -o pipefail
 
@@ -18,4 +18,10 @@ source-config
 
 setup-provider "${PROVIDER}"
 
-destroy-cluster
+setup-ssh-agent
+
+load-env "${RIGGER_VARS_FILE}"
+
+build-deis "${VERSION}"
+
+deploy-deis "${VERSION}"

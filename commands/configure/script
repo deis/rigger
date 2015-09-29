@@ -70,10 +70,10 @@ else
 fi
 
 echo
-rerun_log "Rerun Deis has been configured on this system using ${RIGGER_VARS_FILE}"
+rerun_log "Rigger has been configured on this system using ${RIGGER_VARS_FILE}"
 
 cat <<EOF
-To use the configuration outside of Rerun, you can run:
+To use the configuration outside of rigger, you can run:
 
   source "${RIGGER_VARS_FILE}"
 

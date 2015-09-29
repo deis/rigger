@@ -16,8 +16,6 @@ rerun_options_parse "$@"
 
 source-config
 
-trap destroy-cluster EXIT
-
 setup-upgrader "${UPGRADE_STYLE}"
 
 save-vars UPGRADE_STYLE
