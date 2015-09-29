@@ -18,6 +18,15 @@ then
     }
 fi
 
+
+
+function install-bin-deps {
+  export PATH="${EXTERNAL_BIN_DIR}:${PATH}"
+  save-vars PATH
+
+  install-jq
+}
+
 function check-registry {
   if ! curl -s "${DEV_REGISTRY}" 1> /dev/null && ! curl -s "https://${DEV_REGISTRY}" 1> /dev/null; then
     rerun_log error "DEV_REGISTRY is not accessible, exiting..."
@@ -65,6 +74,8 @@ function source-shared {
 
 function source-defaults {
   source "config/defaults.sh"
+
+  install-bin-deps
 }
 
 function source-config {

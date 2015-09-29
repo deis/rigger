@@ -5,6 +5,7 @@ export UPGRADER_DIR="${RIGGER_ROOT}/options/upgrade-style"
 export RIGGER_CURRENT_ENV="${RIGGER_HOME}/vars"
 
 export TERRAFORM_DIR="${RIGGER_HOME}/terraform"
+export EXTERNAL_BIN_DIR="${RIGGER_HOME}/bins"
 
 export DEIS_ID=${DEIS_ID:-$(openssl rand -hex 5)}
 export DEIS_ID_DIR="${RIGGER_HOME}/${DEIS_ID}"
@@ -20,4 +21,4 @@ export DEISCLI_BIN="${DEIS_BIN_DIR}/deis"
 export DEISCTL_BIN="${DEIS_BIN_DIR}/deisctl"
 export DEISCTL_UNITS="${RIGGER_HOME}/units"
 
-export PATH="${RIGGER_ROOT}/bin:${PATH}"
+export PATH="${RIGGER_ROOT}/bin:${EXTERNAL_BIN_DIR}:${PATH}"
