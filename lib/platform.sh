@@ -12,9 +12,9 @@ function can-use-ci-artifacts {
   local docker_tag="$(get-docker-tag)"
 
   pushd "${DEIS_ROOT}" &> /dev/null
-    if [ -z "$(git status --porcelain)" ]; then
-      # picked store-monitor because it is last to be pushed (alphabetical)
-      docker-hub-contains-image "store-monitor" "${docker_tag}"
+    if [ -z "$(git status --porcelain)" ] && \
+       docker-hub-contains-image "store-monitor" "${docker_tag}"; then
+      return 0
     else
       rerun_log error "Deis repo ($(pwd)) contains changes, can't use CI artifacts in Docker Hub."
       return 1
