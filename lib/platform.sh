@@ -2,6 +2,36 @@ function is-released-version {
   [[ ${1} =~ ^([0-9]+\.){0,2}[0-9]$ ]] && return 0
 }
 
+function get-docker-tag {
+  pushd "${DEIS_ROOT}" &> /dev/null
+  echo "git-$(git rev-parse --short HEAD)"
+  popd &> /dev/null
+}
+
+function can-use-ci-artifacts {
+  local docker_tag="$(get-docker-tag)"
+
+  pushd "${DEIS_ROOT}" &> /dev/null
+    if [ -z "$(git status --porcelain)" ]; then
+      # picked store-monitor because it is last to be pushed (alphabetical)
+      docker-hub-contains-image "store-monitor" "${docker_tag}"
+    else
+      rerun_log error "Deis repo ($(pwd)) contains changes, can't use CI artifacts in Docker Hub."
+      return 1
+    fi
+  popd &> /dev/null
+}
+
+function docker-hub-contains-image {
+  image="${1}"
+  docker_tag="${2}"
+  repository="${3:-deisci}"
+
+  curl -s "https://hub.docker.com/v2/repositories/${repository}/${image}/tags/" \
+    | jq '.results[].name' \
+    | grep -q "${docker_tag}"
+}
+
 function checkout-deis {
   local dir="${1}"
   local version="${2:-master}"
@@ -30,7 +60,9 @@ function build-deis {
   local version="${1}"
 
   if is-released-version "${version}"; then
-    deisctl config platform set version="v${version}"
+    rerun_log "Using released version ${version}."
+  elif can-use-ci-artifacts; then
+    rerun_log "No need to build, CI artifacts in Docker Hub exist for $(get-docker-tag)."
   else
     check-docker
     check-registry
@@ -50,7 +82,14 @@ function deploy-deis {
   deisctl config platform set domain="${DEIS_TEST_DOMAIN}"
   deisctl config platform set sshPrivateKey="${DEIS_TEST_SSH_KEY}"
 
-  if ! is-released-version "${version}"; then
+  if is-released-version "${version}"; then
+    deisctl config platform set version="v${version}"
+  elif can-use-ci-artifacts; then
+    (
+      cd "${DEIS_ROOT}"
+      IMAGE_PREFIX="deisci/" make set-image
+    )
+  else
     (
       cd "${DEIS_ROOT}"
       make dev-release
