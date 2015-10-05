@@ -7,6 +7,8 @@
 
 describe "shell-reset"
 
+source-defaults
+
 it_would_unset_all_vars_but_path() {
   local varsfile="$(mktemp /tmp/tempvars.XXXX)"
   trap "rm ${varsfile}" EXIT
