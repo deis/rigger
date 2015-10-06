@@ -13,8 +13,8 @@ function create-dev-registry {
   )
 
   local host_ip="${HOST_IPADDR:-$(get-machine-ip)}"
-  export DEV_REGISTRY="${host_ip}:5000"
-  save-vars DEV_REGISTRY
+  export SUGGEST_DEV_REGISTRY="${host_ip}:5000"
+  save-vars SUGGEST_DEV_REGISTRY
 }
 
 function create-docker-env {
