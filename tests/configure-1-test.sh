@@ -12,6 +12,8 @@ export RIGGER_HOME="${TMP}"
 
 trap "rm -rf ${TMP}" EXIT
 
+source-defaults
+
 it_fails_to_load_existing_config() {
   # needs file to exist
   ! rigger configure --file /tmp/deis/nothing-to-see-here

@@ -9,10 +9,6 @@ describe "save-vars"
 
 trap "rm -rf /tmp/riggervars" EXIT
 
-function source-defaults {
-  source ../config/defaults.sh
-}
-
 function setup-vars-file {
   mkdir -p /tmp/riggervars
   mktemp /tmp/riggervars/vars.XXXXXX
