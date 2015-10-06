@@ -142,8 +142,8 @@ function save-vars {
 
 function setup-ssh-agent {
   # generate ssh keys if they don't already exist
-  if [ ! -f "${DEIS_TEST_AUTH_KEY}" ]; then
-    ssh-keygen -t rsa -f "${DEIS_TEST_AUTH_KEY}" -N ''
+  if [ ! -f "${DEIS_TEST_AUTH_KEY_FULL}" ]; then
+    ssh-keygen -t rsa -f "${DEIS_TEST_AUTH_KEY_FULL}" -N ''
   fi
 
   if [ ! -f ${HOME}/.ssh/deiskey ]; then
