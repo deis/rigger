@@ -33,7 +33,7 @@ function configure-user-type {
 }
 
 function configure-deis-version {
-  prompt "Enter Deis version:" VERSION 1.10.0
+  prompt "Enter Deis version:" VERSION "${SUGGEST_DEIS_VERSION}"
   export VERSION
   save-vars VERSION
 }
@@ -65,23 +65,26 @@ function configure-deis-root {
 }
 
 function configure-registry {
+  if [ ${DEIS_SOURCE} -eq 1 ]; then
+    export DEV_REGISTRY="registry.hub.docker.com"
+    export IMAGE_PREFIX="deis"
+  fi
+
   case ${PROVIDER:-} in
     vagrant)
       create-dev-registry
       ;;
-    *)
-      prompt "What's a publicly available Docker registry I can use?" DEV_REGISTRY "${SUGGEST_DEV_REGISTRY:-}"
-      prompt "And an organization/user I can push to (include trailing /)?" IMAGE_PREFIX "${SUGGEST_IMAGE_PREFIX:-}"
-      save-vars IMAGE_PREFIX
-      ;;
   esac
 
-  save-vars DEV_REGISTRY
+  prompt "What's a publicly available Docker registry I can use?" DEV_REGISTRY "${SUGGEST_DEV_REGISTRY:-}"
+  prompt "And an organization/user I can push to (include trailing /)?" IMAGE_PREFIX "${SUGGEST_IMAGE_PREFIX:-}"
+  save-vars DEV_REGISTRY IMAGE_PREFIX
 }
 
 function configure-app-deployment {
-  prompt "What ssh key should I use for application deployment?" DEIS_TEST_AUTH_KEY "${DEIS_TEST_SSH_KEY:-}"
-  save-vars DEIS_TEST_AUTH_KEY
+  prompt "What ssh key should I use for application deployment?" DEIS_TEST_AUTH_KEY_FULL "${DEIS_TEST_SSH_KEY:-}"
+  export DEIS_TEST_AUTH_KEY="$(basename ${DEIS_TEST_AUTH_KEY_FULL})"
+  save-vars DEIS_TEST_AUTH_KEY DEIS_TEST_AUTH_KEY_FULL
 }
 
 function configure-ssh {

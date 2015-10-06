@@ -59,7 +59,8 @@ function setup-deis-client {
 
   rerun_log "Installing deis-cli (${version}) at ${DEISCLI_BIN}..."
 
-  if is-released-version "${version}"; then
+  if is-released-version "${version}" && \
+     ! is-rc-version "${version}"; then
     download-client "deis-cli" "${version}" "${DEIS_ID_DIR}/${version}"
   else
     build-deis-client "${version}" "${DEIS_ROOT}"
@@ -90,6 +91,7 @@ function link-client {
 
 function link-units {
   rerun_log "Linking ${DEISCTL_UNITS} -> ${DEIS_ID_DIR}/${version}/units"
+  rm -f "${DEISCTL_UNITS}"
   ln -sf "${DEIS_ID_DIR}/${version}/units" "${DEISCTL_UNITS}"
 }
 
@@ -115,7 +117,8 @@ function build-deisctl {
 function setup-deisctl-client {
   local version="${1}"
 
-  if is-released-version "${version}"; then
+  if is-released-version "${version}" && \
+     ! is-rc-version "${version}"; then
     download-client "deisctl" "${version}" "${DEIS_ID_DIR}/${version}"
     move-units "${version}"
   else

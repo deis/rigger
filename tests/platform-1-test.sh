@@ -13,6 +13,13 @@ TEST_ROOT="$(mktemp -d /tmp/platform-test.XXX)"
 
 trap "rm -rf ${TEST_ROOT}" EXIT
 
+it_verifies_valid_release_versions() {
+  is-released-version "1.11.0"
+  is-released-version "1.11.0-rc1"
+  is-released-version "0.1.4"
+  ! is-released-version "master"
+}
+
 it_deploys_deis_platform() {
 
   local etcd_checked=1

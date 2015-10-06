@@ -1,5 +1,9 @@
 function is-released-version {
-  [[ ${1} =~ ^([0-9]+\.){0,2}[0-9]$ ]] && return 0
+  [[ ${1} =~ ^([0-9]+\.){1,2}[0-9]+(-rc[0-9]+){0,1}$ ]] && return 0
+}
+
+function is-rc-version {
+  [[ ${1} =~ .*-rc[0-9]+$ ]] && return 0
 }
 
 function get-docker-tag {
@@ -37,7 +41,8 @@ function checkout-deis {
   local version="${2:-master}"
   local repo="${3:-${DEIS_GIT_REPO}}"
 
-  if is-released-version "${version}"; then
+  if is-released-version "${version}" && \
+     ! is-rc-version "${version}"; then
     version="v${version}"
   fi
 
@@ -79,10 +84,14 @@ function deploy-deis {
 
   check-etcd-alive
 
+  rerun_log warn "deisctl config platform set domain=${DEIS_TEST_DOMAIN}"
   deisctl config platform set domain="${DEIS_TEST_DOMAIN}"
+
+  rerun_log warn "deisctl config platform set sshPrivateKey=${DEIS_TEST_SSH_KEY}"
   deisctl config platform set sshPrivateKey="${DEIS_TEST_SSH_KEY}"
 
   if is-released-version "${version}"; then
+    rerun_log warn "deisctl config platform set version=v${version}"
     deisctl config platform set version="v${version}"
   elif can-use-ci-artifacts; then
     (

@@ -153,7 +153,7 @@ function setup-ssh-agent {
   # prepare the SSH agent
   rerun_log "Starting ssh-agent and adding keys..."
   ssh-add -D 2> /dev/null || eval $(ssh-agent) && ssh-add -D 2> /dev/null
-  ssh-add "${DEIS_TEST_AUTH_KEY}" 2> /dev/null
+  ssh-add "${DEIS_TEST_AUTH_KEY_FULL}" 2> /dev/null
   ssh-add "${DEIS_TEST_SSH_KEY}" 2> /dev/null
 
   export GIT_SSH="${DEIS_ROOT}/tests/bin/git-ssh-nokeycheck.sh"
