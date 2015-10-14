@@ -27,7 +27,7 @@ function create-docker-env {
         brew install docker-machine
       fi
 
-      if docker-machine ls | tail -n +2 | grep -qv deis-registry; then
+      if ! docker-machine ls | tail -n +2 | grep -q deis-registry; then
         docker-machine create \
                        --driver virtualbox \
                        --virtualbox-disk-size=100000 \
