@@ -15,7 +15,7 @@ export SUGGEST_DEV_REGISTRY="registry.hub.docker.com"
 export SUGGEST_GOPATH="${HOME}/go"
 export SUGGEST_DEIS_GIT_REPO="https://github.com/deis/deis.git"
 export SUGGEST_DEIS_GIT_VERSION="master"
-export SUGGEST_DEIS_VERSION="1.11.0"
+export SUGGEST_DEIS_VERSION="1.11.1"
 
 export DEIS_BIN_DIR="${RIGGER_HOME}/bin"
 export DEISCLI_BIN="${DEIS_BIN_DIR}/deis"
