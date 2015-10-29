@@ -11,7 +11,7 @@ function configure-user-type {
   case ${DEIS_SOURCE} in
     1) # released version
       configure-deis-version
-      export DEIS_GIT_REPO="${SUGGEST_DEIS_GIT_REPO}"
+      export DEIS_GIT_REPO="${DEIS_GIT_REPO:-"${SUGGEST_DEIS_GIT_REPO}"}"
       export DEIS_GIT_VERSION="${VERSION}"
       configure-deis-repo
       export GOPATH="${DEIS_ID_DIR}/go"
@@ -82,13 +82,21 @@ function configure-registry {
 }
 
 function configure-app-deployment {
-  prompt "What ssh key should I use for application deployment?" DEIS_TEST_AUTH_KEY_FULL "${DEIS_TEST_SSH_KEY:-}"
+  if [ "${ADVANCED}" == "false" ]; then
+    export DEIS_TEST_AUTH_KEY_FULL="${DEIS_TEST_SSH_KEY}"
+  fi
+
+  ssh-private-key-prompt "What private ssh key should I use for application deployment?" DEIS_TEST_AUTH_KEY_FULL "${DEIS_TEST_SSH_KEY:-}"
   export DEIS_TEST_AUTH_KEY="$(basename ${DEIS_TEST_AUTH_KEY_FULL})"
   save-vars DEIS_TEST_AUTH_KEY DEIS_TEST_AUTH_KEY_FULL
 }
 
 function configure-ssh {
-  prompt "What ssh key should I use (for deisctl/ssh)?" DEIS_TEST_SSH_KEY "${SUGGEST_DEIS_SSH_KEY:-}"
+  if [ "${ADVANCED}" == "false" ]; then
+    export DEIS_TEST_SSH_KEY="${SSH_PRIVATE_KEY_FILE:-}"
+  fi
+
+  ssh-private-key-prompt "What private ssh key should I use (for deisctl/ssh)?" DEIS_TEST_SSH_KEY "${SSH_PRIVATE_KEY_FILE:-}"
   save-vars DEIS_TEST_SSH_KEY
 }
 

@@ -9,13 +9,14 @@ export EXTERNAL_BIN_DIR="${RIGGER_HOME}/bins"
 export DEIS_ID=${DEIS_ID:-$(openssl rand -hex 5)}
 export DEIS_ID_DIR="${RIGGER_HOME}/${DEIS_ID}"
 export RIGGER_VARS_FILE="${DEIS_ID_DIR}/vars"
+export RIGGER_SECRETS_FILE="${RIGGER_HOME}/.secrets"
 
 #suggestions
 export SUGGEST_DEV_REGISTRY="registry.hub.docker.com"
 export SUGGEST_GOPATH="${HOME}/go"
 export SUGGEST_DEIS_GIT_REPO="https://github.com/deis/deis.git"
 export SUGGEST_DEIS_GIT_VERSION="master"
-export SUGGEST_DEIS_VERSION="1.11.1"
+export SUGGEST_DEIS_VERSION="1.11.2"
 
 export DEIS_BIN_DIR="${RIGGER_HOME}/bin"
 export DEISCLI_BIN="${DEIS_BIN_DIR}/deis"
