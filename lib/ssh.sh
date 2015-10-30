@@ -46,7 +46,7 @@ function setup-ssh-agent {
     eval $(ssh-agent) 2> /dev/null
   fi
 
-  ensure-ssh-keys-loaded "${DEIS_TEST_AUTH_KEY_FULL}" "${DEIS_TEST_AUTH_KEY_FULL}"
+  ensure-ssh-keys-loaded "${DEIS_TEST_SSH_KEY}" "${DEIS_TEST_AUTH_KEY_FULL}"
 
   export GIT_SSH="${DEIS_ROOT}/tests/bin/git-ssh-nokeycheck.sh"
 
