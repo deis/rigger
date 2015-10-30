@@ -5,14 +5,9 @@ set -eo pipefail -o nounset
 function install-terraform {
   local os="$(uname | tr '[:upper:]' '[:lower:]')"
   local arch="$(uname -m)"
-  local terraform_version="0.6.3"
+  local terraform_version="0.6.4"
   local terraform_base_url="https://dl.bintray.com/mitchellh/terraform"
   local terraform_filename
-
-  if command -v terraform &>/dev/null; then
-    rigger-log "Terraform already available ($(command -v terraform))."
-    return 0
-  fi
 
   case ${arch} in
     x86_64)
@@ -31,7 +26,7 @@ function install-terraform {
     cd ${TERRAFORM_DIR}
     if [ ! -e terraform ]; then
       rigger-log "Downloading Terraform..."
-      rigger-log debug "installing in ${TERRAFORM_DIR}"
+      rigger-log "installing in ${TERRAFORM_DIR}"
       curl -L "${terraform_base_url}/${terraform_filename}" -o "${terraform_filename}"
       unzip "${terraform_filename}"
     else

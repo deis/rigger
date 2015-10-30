@@ -1,5 +1,7 @@
 function activate-docker-machine-env {
   if [ $(which-os) == darwin ]; then
+    docker-machine start deis-registry
+
     eval "$(docker-machine env deis-registry)"
     save-vars DOCKER_TLS_VERIFY DOCKER_HOST DOCKER_CERT_PATH DOCKER_MACHINE_NAME
   fi
@@ -27,7 +29,7 @@ function create-docker-env {
         brew install docker-machine
       fi
 
-      if ! docker-machine ls | tail -n +2 | grep -q deis-registry; then
+      if ! docker-machine ls | grep -q deis-registry; then
         docker-machine create \
                        --driver virtualbox \
                        --virtualbox-disk-size=100000 \

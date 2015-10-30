@@ -21,6 +21,15 @@ rerun_options_parse "$@"
 
 source-defaults
 
+load-secrets
+
+if [ "${ADVANCED}" == "false" ]; then
+  export DEIS_SOURCE=1
+  if [ -z "${VERSION}" ]; then
+    export VERSION="${SUGGEST_DEIS_VERSION}"
+  fi
+fi
+
 if [ -n "${FILE:-}" ]; then
   rerun_log warn "You are using a preconfigured Deis config file from ${FILE}:"
   update-link ${FILE}
@@ -56,9 +65,11 @@ else
 
   load-env "${RIGGER_VARS_FILE}"
 
-  create-docker-env
-  configure-registry
-  activate-docker-machine-env
+  if [ ${DEIS_SOURCE} -ne 1 ]; then
+    create-docker-env
+    configure-registry
+    activate-docker-machine-env
+  fi
 
   configure-ssh
 

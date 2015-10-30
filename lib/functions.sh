@@ -18,8 +18,6 @@ then
     }
 fi
 
-
-
 function install-bin-deps {
   export PATH="${EXTERNAL_BIN_DIR}:${PATH}"
   save-vars PATH
@@ -101,8 +99,16 @@ function echo-export {
   echo "export ${variable}=\"${!variable}\""
 }
 
+function load-secrets {
+  if [ -f "${RIGGER_SECRETS_FILE}" ]; then
+    source "${RIGGER_SECRETS_FILE}"
+  fi
+}
+
 function load-env {
   local environment="${1:-${RIGGER_CURRENT_ENV}}"
+
+  load-secrets
 
   if [ -f "${environment}" ]; then
     rerun_log debug "Sourcing ${environment}"
@@ -134,6 +140,11 @@ function update-link {
   else
     rerun_die "${file} does not exist."
   fi
+}
+
+function save-secrets {
+  rigger-save-vars -f "${RIGGER_SECRETS_FILE}" ${@}
+  chmod 600 "${RIGGER_SECRETS_FILE}"
 }
 
 function save-vars {
