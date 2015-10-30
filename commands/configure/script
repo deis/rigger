@@ -75,6 +75,8 @@ else
 
   configure-app-deployment
 
+  setup-ssh-agent
+  
   configure-dns
 
   update-link "${RIGGER_VARS_FILE}"

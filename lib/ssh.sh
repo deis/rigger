@@ -18,6 +18,18 @@ function ssh-fingerprint {
   fi
 }
 
+function ensure-ssh-keys-loaded {
+  rerun_log "Ensuring ssh keys are being served by ssh-agent..."
+
+  local keys="$(echo ${@} | tr ' ' '\n' | uniq)"
+
+  for key in ${keys}; do
+    if ! ssh-add -L | grep -q "${key}"; then
+      ssh-add "${key}" 2> /dev/null
+    fi
+  done
+}
+
 function setup-ssh-agent {
   # generate ssh keys if they don't already exist
   if [ ! -f "${DEIS_TEST_AUTH_KEY_FULL}" ]; then
@@ -29,14 +41,14 @@ function setup-ssh-agent {
   fi
 
   # prepare the SSH agent
-  if [ -z ${SSH_AGENT_PID} ]; then
+  if [ -z ${SSH_AGENT_PID:-} ]; then
     rerun_log "Starting ssh-agent..."
-    ssh-add -D 2> /dev/null || eval $(ssh-agent) && ssh-add -D 2> /dev/null
+    eval $(ssh-agent) 2> /dev/null
   fi
 
-  rerun_log "Ensuring ssh keys are being served by ssh-agent..."
-  ssh-add "${DEIS_TEST_AUTH_KEY_FULL}" 2> /dev/null
-  ssh-add "${DEIS_TEST_SSH_KEY}" 2> /dev/null
+  ensure-ssh-keys-loaded "${DEIS_TEST_AUTH_KEY_FULL}" "${DEIS_TEST_AUTH_KEY_FULL}"
 
   export GIT_SSH="${DEIS_ROOT}/tests/bin/git-ssh-nokeycheck.sh"
+
+  save-vars SSH_AUTH_SOCK SSH_AGENT_PID
 }
