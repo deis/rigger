@@ -151,25 +151,6 @@ function save-vars {
   rigger-save-vars -f "${RIGGER_VARS_FILE}" ${@}
 }
 
-function setup-ssh-agent {
-  # generate ssh keys if they don't already exist
-  if [ ! -f "${DEIS_TEST_AUTH_KEY_FULL}" ]; then
-    ssh-keygen -t rsa -f "${DEIS_TEST_AUTH_KEY_FULL}" -N ''
-  fi
-
-  if [ ! -f ${HOME}/.ssh/deiskey ]; then
-    ssh-keygen -q -t rsa -f ~/.ssh/deiskey -N '' -C deiskey
-  fi
-
-  # prepare the SSH agent
-  rerun_log "Starting ssh-agent and adding keys..."
-  ssh-add -D 2> /dev/null || eval $(ssh-agent) && ssh-add -D 2> /dev/null
-  ssh-add "${DEIS_TEST_AUTH_KEY_FULL}" 2> /dev/null
-  ssh-add "${DEIS_TEST_SSH_KEY}" 2> /dev/null
-
-  export GIT_SSH="${DEIS_ROOT}/tests/bin/git-ssh-nokeycheck.sh"
-}
-
 function setup-test-hacks {
   # cleanup any stale example applications
   rm -rf ${DEIS_ROOT}/tests/example-*
