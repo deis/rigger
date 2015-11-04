@@ -23,6 +23,7 @@ rerun_options_parse() {
         OPT="$1"
         case "$OPT" in
             --advanced) ADVANCED=true; [[ ${2:-} == true ]] && shift ;;
+            --file) rerun_option_check $# $1; FILE=$2 ; shift ;;
             --provider) rerun_option_check $# $1; PROVIDER=$2 ; shift ;;
             --version) rerun_option_check $# $1; VERSION=$2 ; shift ;;
             # help option
@@ -44,6 +45,7 @@ rerun_options_parse() {
     # If option variables are declared exportable, export them.
     export PROVIDER
     export VERSION
+    export FILE
     #
     return 0
 }
@@ -51,6 +53,7 @@ rerun_options_parse() {
 
 # If not already set, initialize the options variables to null.
 : ${ADVANCED:=}
+: ${FILE:=}
 : ${PROVIDER:=}
 : ${VERSION:=}
 

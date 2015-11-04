@@ -3,4 +3,4 @@
 # Mon Aug 17 13:54:00 MDT 2015
 NAME=configure
 DESCRIPTION="initialize a rigger varsfile to use with future commands"
-OPTIONS="advanced provider version"
+OPTIONS="advanced provider version file"
