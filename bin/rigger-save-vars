@@ -49,7 +49,7 @@ function check-inputs {
 function save-var {
   local var="${1}"
 
-  sed -i .bak -e "/^export ${var}=.*$/d" ${RIGGER_VARS_FILE}
+  sed -i -e.bak "/^export ${var}=.*$/d" ${RIGGER_VARS_FILE}
   rm -f "${RIGGER_VARS_FILE}.bak"
   echo "export ${var}=\"${!var}\"" >> "${RIGGER_VARS_FILE}"
   sort -u "${RIGGER_VARS_FILE}" -o "${RIGGER_VARS_FILE}"
