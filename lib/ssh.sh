@@ -3,9 +3,11 @@ function ssh-fingerprint {
 
   local sshkeygen_string="ssh-keygen -lf"
 
+  set +o pipefail
   if ssh-keygen - 2>&1 | grep -q "\-E"; then
     sshkeygen_string="ssh-keygen -E md5 -lf"
   fi
+  set -o pipefail
 
   local fingerprint="$(${sshkeygen_string} "${private_key_file}" 2>/dev/null \
                           | awk '{ print $2 }' \

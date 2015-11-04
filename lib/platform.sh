@@ -41,8 +41,8 @@ function checkout-deis {
   local version="${2:-master}"
   local repo="${3:-${DEIS_GIT_REPO}}"
 
-  if is-released-version "${version}" && \
-     ! is-rc-version "${version}"; then
+  if is-released-version "${version}" || \
+     is-rc-version "${version}"; then
     version="v${version}"
   fi
 
