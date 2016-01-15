@@ -155,6 +155,11 @@ function ssh-private-key-prompt {
 
   skip-prompt-if-set ${return_var} || return 0
 
+  while [ -z "$(list-private-keys)" ]; do
+    rerun_log error "You don't have any ssh keypairs for rigger to use. Let's create one!"
+    ssh-keygen -t rsa -b 4096 1>&2
+  done
+
   local options=($(list-private-keys))
 
   if [ ! -z ${default} ]; then
