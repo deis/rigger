@@ -145,7 +145,7 @@ function index-of {
 }
 
 function list-private-keys {
-  find "${HOME}/.ssh" -type f -exec grep -l 'PRIVATE KEY[-]*$' {} \;
+  find "${HOME}/.ssh/" -type f -exec grep -l 'PRIVATE KEY[-]*$' {} \;
 }
 
 function ssh-private-key-prompt {
