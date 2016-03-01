@@ -6,7 +6,7 @@ function install-terraform {
   local os="$(uname | tr '[:upper:]' '[:lower:]')"
   local arch="$(uname -m)"
   local terraform_version="0.6.4"
-  local terraform_base_url="https://dl.bintray.com/mitchellh/terraform"
+  local terraform_base_url="https://releases.hashicorp.com/terraform/${terraform_version}"
   local terraform_filename
 
   case ${arch} in
@@ -27,6 +27,7 @@ function install-terraform {
     if [ ! -e terraform ]; then
       rigger-log "Downloading Terraform..."
       rigger-log "installing in ${TERRAFORM_DIR}"
+      echo "${terraform_base_url}/${terraform_filename}"
       curl -L "${terraform_base_url}/${terraform_filename}" -o "${terraform_filename}"
       unzip "${terraform_filename}"
     else
