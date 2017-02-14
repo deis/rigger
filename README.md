@@ -1,5 +1,8 @@
 # rigger
 
+|![](https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Warning.svg/156px-Warning.svg.png) | Since Deis recommends the [use of Deis Workflow over Deis v1](https://deis.com/blog/2017/deis-paas-v1-takes-a-bow/), `rigger` (a tool designed to ease installation of Deis v1) is no longer developed or maintained. |
+|---|---|
+
 [![Build Status](https://travis-ci.org/deis/rigger.svg?branch=master)](https://travis-ci.org/deis/rigger)
 
 `rigger` is your interface to deploying Deis on a variety of cloud providers and is **currently only for development and Deis cluster trial purposes.**
